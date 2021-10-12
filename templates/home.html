@@ -1,0 +1,49 @@
+{% extends 'models/main.model.html' %} {% block title %} Home {% endblock
+title%} {% block stylecdn %}
+<link rel="stylesheet" href="../static/css/home.css" />
+{% endblock stylecdn %} {% block content %}
+<div class="banner"></div>
+<section>
+  <div class="container-fluid p-4">
+    <div class="row">
+      <div class="col">
+        <!-- cambiar las etiquetas h3 por unas semanticamente adecuadas -->
+        <h3>
+          <strong>Bienvenido a <span class="text-primary">Hotel</span></strong>
+        </h3>
+        <p>
+          Lorem ipsum dolor sit amet, consecte ur adipiscing elit. Aenean cursus
+          porta ante, eget tincidunt est mollis ut. Nullam et dapibus nunc. Duis
+          egestas ex ac cursus faucibus. Donec sed leo pulvinar, sagittis odio
+          egestas, accumsan ligula. Nunc non nisl imperdiet, gravida lectus
+          eget, vehicula orci. Nam a iaculis quam, quis placerat purus. Donec
+          commodo eros nec enim commodo sodales. Morbi faucibus mauris leo, vel
+          venenatis justo rhoncus ut. Mauris tortor erat, porta in imperdiet
+          non, rhoncus fermentum ante. Donec semper nibh ipsum, sit amet
+          accumsan magna viverra a. Sed pharetra velit ex, ut ullamcorper lectus
+          scelerisque in.
+        </p>
+      </div>
+      <div class="col">
+        <div class="border border-dark p-3 m-3">
+          <div class="container">
+            <form action="">
+              <div class="m-2">
+                <span>desde</span>
+                <input type="date" class="form-control" />
+              </div>
+              <div class="m-2 mt-3">
+                <span>desde</span>
+                <input type="date" class="form-control" />
+              </div>
+              <div class="mx-2">
+                  <button class="btn btn-primary w-100">Disponibilidad</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
