@@ -1,0 +1,193 @@
+<!-- macros -->
+<div>
+    {% macro newComponent(numero, estado) -%}
+    <div class="container bg-dark text-light rounded-3 px-3 pt-1 mb-1">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col">
+              <p>Número:</p>
+            </div>
+            <div class="col">
+              <strong>{{numero}}</strong>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p>Disponibilidad actual:</p>
+            </div>
+            <div class="col">
+              {% if estado %}
+              <strong class="text-success">DISPONIBLE</strong> {%else %}<strong
+                class="text-danger"
+                >NO DISPONIBLE</strong
+              >
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 offset-2">
+          <div class="d-flex justify-content-end me-4">
+            <button class="btn btn-primary mt-3">Apartar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%- endmacro %}
+  </div>
+  <!-- endMacros -->
+  
+  {% if false %} {% extends 'models/main.model.html' %} {%else %} {% extends
+  'models/loggedIn.model.html' %} {% endif %} {% block title %} Home {% endblock
+  title%} {% block stylecdn %}
+  <link rel="stylesheet" href="../static/css/home.css" />
+  {% endblock stylecdn %} {% block content %}
+  <div class="banner"></div>
+  <section>
+    <div class="container-fluid p-4">
+      <div class="row">
+        <div class="col">
+          <!-- cambiar las etiquetas h3 por unas semanticamente adecuadas -->
+          <h3>
+            <strong>Bienvenido a <span class="text-primary">Hotel</span></strong>
+          </h3>
+          <p>
+            Lorem ipsum dolor sit amet, consecte ur adipiscing elit. Aenean cursus
+            porta ante, eget tincidunt est mollis ut. Nullam et dapibus nunc. Duis
+            egestas ex ac cursus faucibus. Donec sed leo pulvinar, sagittis odio
+            egestas, accumsan ligula. Nunc non nisl imperdiet, gravida lectus
+            eget, vehicula orci. Nam a iaculis quam, quis placerat purus. Donec
+            commodo eros nec enim commodo sodales. Morbi faucibus mauris leo, vel
+            venenatis justo rhoncus ut. Mauris tortor erat, porta in imperdiet
+            non, rhoncus fermentum ante. Donec semper nibh ipsum, sit amet
+            accumsan magna viverra a. Sed pharetra velit ex, ut ullamcorper lectus
+            scelerisque in.
+          </p>
+        </div>
+        <div class="col">
+          <div class="border border-dark p-3 m-3">
+            <div class="container">
+              <form action="">
+                <div class="m-2">
+                  <span>desde</span>
+                  <input type="date" class="form-control" />
+                </div>
+                <div class="m-2 mt-3">
+                  <span>desde</span>
+                  <input type="date" class="form-control" />
+                </div>
+                <div class="mx-2">
+                  <button
+                    type="button"
+                    class="btn btn-primary w-100 mt-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalAvailability"
+                  >
+                    Disponibilidad
+                  </button>
+                </div>
+              </form>
+              <!-- Modal Availability-->
+              <div
+                class="modal fade"
+                id="modalAvailability"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                tabindex="-1"
+                aria-labelledby="staticBackdropLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="staticBackdropLabel">
+                        Consultar disponibilidad
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="container">
+                        <div class="row">
+                          <div class="col">
+                            <h5>¿Cuánto tiempo estarás con nostros?</h5>
+                            <div class="container mb-2">
+                              <div>
+                                <div class="mb-2">
+                                  <span>Desde: </span>
+                                  <input type="date" class="form-control" />
+                                </div>
+                                <div class="mb-2">
+                                  <span>Hasta: </span>
+                                  <input type="date" class="form-control" />
+                                </div>
+                                <button class="w-100 btn btn-primary">
+                                  Disponibilidad
+                                </button>
+                              </div>
+                            </div>
+                            <div class="mt-5">
+                              <h5>Habitaciones disponibles</h5>
+                              <div>{{newComponent('001', true)}}</div>
+                              <div>{{newComponent('002', true)}}</div>
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="container">
+                              <h5>Habitación seleccionada</h5>
+                              <div
+                                class="
+                                  alert
+                                  bg-dark
+                                  text-light
+                                  d-flex
+                                  justify-content-between
+                                "
+                              >
+                                <div class="ms-2">
+                                  Número: <strong>002</strong>
+                                </div>
+                                <div>
+                                  <button class="btn-danger btn">eliminar</button>
+                                </div>
+                              </div>
+                              <div class="form-check">
+                                <input
+                                  class="form-check-input"
+                                  type="checkbox"
+                                  value=""
+                                  id="flexCheckIndeterminate"
+                                />
+                                <label
+                                  class="form-check-label"
+                                  for="flexCheckIndeterminate"
+                                >
+                                  <small
+                                    >Acepto los
+                                    <a href="#">termonos y condiciones.</a></small
+                                  >
+                                </label>
+                              </div>
+                              <button class="btn btn-primary w-100 mt-4">
+                                <strong>RESERVAR</strong>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endblock content %}
+  

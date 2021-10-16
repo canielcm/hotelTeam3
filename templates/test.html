@@ -1,0 +1,17 @@
+<!-- macros -->
+
+    {% macro miCard(name="pepe", numero=6) -%}
+    <div class="card alert alert-success">
+        hola {{name}} te mide {{numero}}cm
+    </div>
+    {%- endmacro %}
+  <!-- endMacros -->
+
+{% extends 'models/loggedIn.model.html' %} 
+{% block title %} Pepe{% endblock title %}
+{% block content %} 
+<h1>Pepe</h1> 
+{{miCard()}}
+{{miCard("josé david pepe", 10)}}
+
+{% endblock content %}

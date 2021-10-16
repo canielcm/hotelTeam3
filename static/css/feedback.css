@@ -1,0 +1,13 @@
+.banner {
+  background-image: url("../images/habitación-doble-catalonia-620x412.jpg");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+  height: 340px;
+}
+div.a {
+  width: 150px;
+  height: 100px;
+  -ms-transform: rotate(270deg); /* IE 9 */
+  transform: rotate(270deg);
+}

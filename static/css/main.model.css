@@ -8,6 +8,10 @@ main {
 a:link, a:visited, a:active {
     text-decoration:none;
 }
+
+.modalRegister{
+  max-width: 750px !important;
+}
 .footerMain{
   min-height: 3vh;
   bottom: 0px;
