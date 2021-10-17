@@ -1,4 +1,62 @@
+<!--Macros-->
+<div>
+    {% macro cardUsers(nombre="usuario 1", id="001", telefono="+57 322333434") -%}
+        <div class="row bg-dark text-white mt-2 rounded-3  ">
+                <div class="col-md-6 p-2">
+                <div class="row p-0 m-0">
+                    <div class="col">
+                    <p>Nombre:</p>
+                    </div>
+                    <div class="col">
+                    <strong>{{nombre}}</strong>
+                    </div>
+                </div>
+                <div class="row p-0 m-0">
+                    <div class="col">
+                    <p>ID usuario:</p>
+                    </div>
+                    <div class="col">
+                    <strong>{{id}}</strong>
+                    </div>
+                </div>
+                <div class="row p-0 m-0">
+                    <div class="col">
+                    <p>telefono:</p>
+                    </div>
+                    <div class="col">
+                    <strong>{{telefono}}</strong>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-4 offset-2">
+                <div class="d-flex justify-content-end mt-4 me-4">
+                    <button class="btn">
+                        <svg width="50" height="50" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="31" cy="31" r="31" fill="#0477BF"/>
+                            <path d="M18.375 40.1562V45.625H23.8438L39.9729 29.4958L34.5042 24.0271L18.375 40.1562ZM44.2021 25.2667C44.7708 24.6979 44.7708 23.7792 44.2021 23.2104L40.7896 19.7979C40.2208 19.2292 39.3021 19.2292 38.7333 19.7979L36.0646 22.4667L41.5333 27.9354L44.2021 25.2667Z" fill="white"/>
+                        </svg>
+                    </button>
+                    <button class="btn">
+                        <svg width="50" height="50" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="31" cy="31" r="31" fill="#FA4747"/>
+                            <path d="M21.75 42.7083C21.75 44.3125 23.0625 45.625 24.6667 45.625H36.3334C37.9375 45.625 39.25 44.3125 39.25 42.7083V25.2083H21.75V42.7083ZM40.7084 20.8333H35.6042L34.1459 19.375H26.8542L25.3959 20.8333H20.2917V23.75H40.7084V20.8333Z" fill="white"/>
+                        </svg>    
+                    </button>
+                </div>
+                </div>
+        </div>
+    {%- endmacro %}
+</div>
+<!-- End Macros-->
+
+  
+
 {% extends 'models/dashboard.html' %} 
 {% block contentdash %}
-<h2>Hola</h2>
+    <span class="display-6"> <b>Usuarios</b> </span>
+    <div>{{cardUsers()}}</div>
+    <div>{{cardUsers("usuario 2", "002")}}</div>
+    <div>{{cardUsers("usuario 3", "003")}}</div>
+    <div>{{cardUsers("usuario 4", "004")}}</div>
+    <div>{{cardUsers("usuario 5", "005")}}</div>
 {% endblock contentdash %}

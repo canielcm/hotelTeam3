@@ -1,3 +1,7 @@
 .dashboardDiv>.row{
     min-height: 90vh !important;
 }
+
+.my-w {
+    width: 100vw;
+}

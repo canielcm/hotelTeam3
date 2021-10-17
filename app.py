@@ -15,8 +15,14 @@ def feed_page():
     return render_template('feedback.html')
 
 @app.route("/dashboard")
+@app.route("/dashboard/")
+@app.route("/dashboard/usuarios")
 def dashboard_page():
     return render_template('user.dashboard.html')
+
+@app.route("/dashboard/habitaciones")
+def dashboard_habitacion_page():
+    return render_template('habitacion.dashboard.html')
 
 @app.route("/test")
 def test_page():
