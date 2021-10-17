@@ -16,7 +16,7 @@ def feed_page():
 
 @app.route("/dashboard")
 def dashboard_page():
-    return render_template('dashboard.html')
+    return render_template('user.dashboard.html')
 
 @app.route("/test")
 def test_page():
