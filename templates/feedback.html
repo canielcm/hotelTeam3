@@ -1,35 +1,104 @@
-{% extends 'models/loggedIn.model.html' %} {% block title %} Feedback {% endblock
-title%} {% block stylecdn %}
+{% macro feedback(number="001",rating=5, name="sin nombre", text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus a quos dicta pariatur totam. Eaque, nulla consequatur aspernatur excepturi error accusamus consectetur esse cum sint! Veniam eveniet qui harum tempore!") -%}
+<div>
+  <div class="card mb-2">
+    <div class="card-body">
+      <h5 class="card-title">{{name}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{number}}</h6>
+      {% for i in range(rating) %} <label class="star" title="text"></label> {% endfor %}
+      <p class="card-text">
+        {{text}}
+      </p>
+    </div>
+  </div>
+</div>
+{%- endmacro %} {% extends 'models/loggedIn.model.html' %} {% block title %}
+Feedback {% endblock title%} {% block stylecdn %}
 <link rel="stylesheet" href="../static/css/feedback.css" />
 {% endblock stylecdn %} {% block content %}
 <div class="banner"></div>
-<div class="a">
-  <button
-    class="btn btn-dark"
-    type="button"
-    data-bs-toggle="offcanvas"
-    data-bs-target="#offcanvasBottom"
-    aria-controls="offcanvasBottom"
-  >
-    Feedback
-  </button>
+<div class="container">
+  <div class="alert alert-primary mt-4">
+    <div class="row">
+      <div class="col-8">
+        ¡Hola! Bienvenido al area social, hablanos de tu experiencia y dejanos
+        tu feedback.
+      </div>
+      <div class="col-2 offset-2">
+        <button
+          class="btn btn-dark w-100"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasBottom"
+          aria-controls="offcanvasBottom"
+        >
+          Feedback
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {{feedback()}}
+  {{feedback("003", 4, "José")}}
 </div>
 <div
-  class="offcanvas offcanvas-bottom"
+  class="offcanvas offcanvas-bottom offcanvas-xl"
   tabindex="-1"
   id="offcanvasBottom"
   aria-labelledby="offcanvasBottomLabel"
 >
-  <div class="offcanvas-header">
-    <h3 class="offcanvas-title" id="offcanvasBottomLabel">Modulo Feddback</h3>
-    <button
-      type="button"
-      class="btn-close text-reset"
-      data-bs-dismiss="offcanvas"
-      aria-label="Close"
-    ></button>
+  <div class="offcanvas-body m-0 p-0">
+    <div class="bg-dark text-light p-3 mb-3">
+      <h3 class="offcanvas-title text-center" id="offcanvasBottomLabel">
+        Agrega un comentario
+      </h3>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="mb-3">
+            <h5>¿Cuál fue su habitación?</h5>
+            <select
+              class="form-select w-50"
+              aria-label="Default select example"
+            >
+              <option selected>Selecciona tu habitación</option>
+              <option value="1">001</option>
+              <option value="2">002</option>
+              <option value="3">003</option>
+            </select>
+          </div>
+          <div class="rate">
+            <h5>Califique su habitación</h5>
+            <input type="radio" id="star5" name="rate" value="5" />
+            <label for="star5" title="text">5 stars</label>
+            <input type="radio" id="star4" name="rate" value="4" />
+            <label for="star4" title="text">4 stars</label>
+            <input type="radio" id="star3" name="rate" value="3" />
+            <label for="star3" title="text">3 stars</label>
+            <input type="radio" id="star2" name="rate" value="2" />
+            <label for="star2" title="text">2 stars</label>
+            <input type="radio" id="star1" name="rate" value="1" />
+            <label for="star1" title="text">1 star</label>
+          </div>
+        </div>
+        <div class="col">
+          <div class="mb-3">
+            <h5>Hablanos de tu experiencia</h5>
+            <textarea
+              name=""
+              id=""
+              cols="20"
+              rows="6"
+              class="form-control"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary w-100 p-2 mt-3">Enviar feedback</button>
+      </div>
+    </div>
   </div>
-  <div class="offcanvas-body small">...</div>
 </div>
 
 {% endblock content %}
