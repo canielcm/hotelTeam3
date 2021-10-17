@@ -1,5 +1,18 @@
-{% extends 'models/loggedIn.model.html' %} {% block title %} Feedback {%
-endblock title%} {% block stylecdn %}
+{% macro feedback(number="001",rating=5, name="sin nombre", text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus a quos dicta pariatur totam. Eaque, nulla consequatur aspernatur excepturi error accusamus consectetur esse cum sint! Veniam eveniet qui harum tempore!") -%}
+<div>
+  <div class="card mb-2">
+    <div class="card-body">
+      <h5 class="card-title">{{name}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{number}}</h6>
+      {% for i in range(rating) %} <label class="star" title="text"></label> {% endfor %}
+      <p class="card-text">
+        {{text}}
+      </p>
+    </div>
+  </div>
+</div>
+{%- endmacro %} {% extends 'models/loggedIn.model.html' %} {% block title %}
+Feedback {% endblock title%} {% block stylecdn %}
 <link rel="stylesheet" href="../static/css/feedback.css" />
 {% endblock stylecdn %} {% block content %}
 <div class="banner"></div>
@@ -7,22 +20,25 @@ endblock title%} {% block stylecdn %}
   <div class="alert alert-primary mt-4">
     <div class="row">
       <div class="col-8">
-        ¡Hola! Bienvenido al area social, hablanos de tu experiencia y dejanos tu feedback.
+        ¡Hola! Bienvenido al area social, hablanos de tu experiencia y dejanos
+        tu feedback.
       </div>
       <div class="col-2 offset-2">
         <button
-        class="btn btn-dark w-100"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasBottom"
-        aria-controls="offcanvasBottom"
-      >
-        Feedback
-      </button>
+          class="btn btn-dark w-100"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasBottom"
+          aria-controls="offcanvasBottom"
+        >
+          Feedback
+        </button>
       </div>
     </div>
   </div>
 
+  {{feedback()}}
+  {{feedback("003", 4, "José")}}
 </div>
 <div
   class="offcanvas offcanvas-bottom offcanvas-xl"
