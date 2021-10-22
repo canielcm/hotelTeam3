@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -27,6 +27,15 @@ def dashboard_habitacion_page():
 @app.route("/test")
 def test_page():
     return render_template('test.html')
+
+@app.route("/testhttp", methods=["GET","POST"])
+def rest_http():
+    if request.method=="POST":
+        user = request.form
+        print(user)
+        return render_template('home.html', user=user)
+    else:
+        return render_template('home.html')
 
 @app.route('/about/<username>')
 def about_page(username):

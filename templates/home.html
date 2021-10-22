@@ -49,7 +49,7 @@ title%} {% block stylecdn %}
       <div class="col">
         <!-- cambiar las etiquetas h3 por unas semanticamente adecuadas -->
         <h3>
-          <strong>Bienvenido a <span class="text-primary">Hotel</span></strong>
+          <strong>Bienvenido a <span class="text-primary">Hotel</span> {% if user %} {{user.email}} {% endif %} </strong>
         </h3>
         <p>
           Lorem ipsum dolor sit amet, consecte ur adipiscing elit. Aenean cursus
