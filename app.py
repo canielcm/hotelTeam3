@@ -1,3 +1,4 @@
+from os import name
 import re
 from flask import Flask, render_template, request, session, url_for, redirect
 import sqlite3
@@ -130,6 +131,7 @@ def get_rooms():
       print(res)
     conn.close()
     return {"rows": rows}
+
 def get_comments():
     conn=sqlite3.connect("hotel_db.db")
     cur = conn.cursor()
@@ -140,6 +142,39 @@ def get_comments():
       print(res)
     conn.close()
     return {"rows": rows}
+
+@app.route("/room/<startDate>/<targetDate>")
+def room_availability(startDate,targetDate):
+    # Connect to db
+    db = sqlite3.connect('hotel_db.db')
+    cursor = db.cursor()
+
+    # get data into db
+    cursor.execute('select id_room FROM room where id_room not in(select id_room from reservation where startDate between "%s" and "%s" OR targetDate between "%s" and "%s" OR "%s" between startDate and targetDate OR "%s" between startDate and targetDate);' % (startDate,targetDate,startDate,targetDate,startDate,targetDate))
+    rows =cursor.fetchall()
+    # Close db connection
+    db.close()
+    return {"rows": rows}
+
+@app.route("/reservation",methods=["POST"])
+def add_reservation():
+    startDate = request.json["startDate"]
+    targetDate = request.json["targetDate"]
+    id_user = request.json["id_user"]
+    id_room = request.json["id_room"]
+    state = 0
+    if startDate and targetDate and id_user and id_room:
+        # Connect to db
+        db = sqlite3.connect('hotel_db.db')
+        cursor = db.cursor()
+        # Insert data into db
+        cursor.execute('INSERT INTO reservation(id_user, id_room, startDate, targetDate, state) VALUES("%s", "%s","%s","%s","%s")' % (id_user, id_room, startDate, targetDate, state))
+        db.commit()
+        # Close db connection
+        db.close()
+        return {"message": "reservation added", "data":request.json}
+    else:
+        return {"message": "data missing"}
 
 @app.route("/feed", methods=["GET","POST"])
 def feed_page():
@@ -159,7 +194,6 @@ def feed_page():
             # Insert data into db
             cursor.execute('INSERT INTO comments(id_user, id_room, message, rating) VALUES("%s", "%s","%s","%s")' % (user["id"],request.form["room"],request.form["comment"] ,request.form["rate"]))
             db.commit()
-
             # Close db connection
             db.close()
     rooms = get_rooms()
