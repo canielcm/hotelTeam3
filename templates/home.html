@@ -35,7 +35,11 @@
 </div>
 <!-- endMacros -->
 
+<<<<<<< HEAD
 {% if false %} {% extends 'models/main.model.html' %} {%else %} {% extends
+=======
+{% if session.login!=1 %} {% extends 'models/main.model.html' %} {%else %} {% extends
+>>>>>>> 73de1ba46e539ef9ebf17f03afb3525e2fc6fbaa
 'models/loggedIn.model.html' %} {% endif %} {% block title %} Home {% endblock
 title%} {% block stylecdn %}
 <link rel="stylesheet" href="../static/css/home.css" />
