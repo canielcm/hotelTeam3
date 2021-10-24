@@ -35,11 +35,7 @@
 </div>
 <!-- endMacros -->
 
-<<<<<<< HEAD
-{% if false %} {% extends 'models/main.model.html' %} {%else %} {% extends
-=======
-{% if session.login!=1 %} {% extends 'models/main.model.html' %} {%else %} {% extends
->>>>>>> 73de1ba46e539ef9ebf17f03afb3525e2fc6fbaa
+{% if session.login == 0 %} {% extends 'models/main.model.html' %} {%else %} {% extends
 'models/loggedIn.model.html' %} {% endif %} {% block title %} Home {% endblock
 title%} {% block stylecdn %}
 <link rel="stylesheet" href="../static/css/home.css" />
@@ -47,8 +43,8 @@ title%} {% block stylecdn %}
 <div class="banner"></div>
 <div class="card card-body">
   session: {{session}},
-  {% if user%}
-  {{user}}
+  {% if session.user%}
+  {{session.user.name}}
   {% endif %}
 </div>
 <section>

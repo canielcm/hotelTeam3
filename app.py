@@ -6,12 +6,47 @@ from werkzeug.security import generate_password_hash,check_password_hash
 app = Flask(__name__)
 app.secret_key = 'nekomotsu9029'
 
+def getCurrentUser():
+    if 'email' in session:
+        email = session['email']
+        db = sqlite3.connect('hotel_db.db')
+
+        sentencia = "SELECT * FROM user where email='"+email+"'"
+        
+        cursor = db.cursor()
+        cursor.execute(sentencia)
+        data = cursor.fetchall()
+
+        db.close()
+
+        if(len(data) > 0):
+            user = {
+            "id": data[0][0],
+            "name": data[0][1],
+            "rol": data[0][3],
+            "email": data[0][4]
+            }
+            return {
+                "login": 1,
+                "user": user
+            }
+        else:
+            return {
+                "login": 0,
+                "user": ""
+            }
+    else:
+        return {
+            "login": 0,
+            "user": ""
+        }
+
 @app.route('/signIn', methods=["POST"])
 def signin():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        #password = generate_password_hash(password, 'sha256', 30)
+
         db = sqlite3.connect('hotel_db.db')
 
         sentencia = "SELECT * FROM user where email='"+email+"'"
@@ -57,28 +92,8 @@ def signup():
 
 @app.route('/')
 def index():
-    if 'email' in session:
-        email = session['email']
-        db = sqlite3.connect('hotel_db.db')
-
-        sentencia = "SELECT * FROM user where email='"+email+"'"
-        
-        cursor = db.cursor()
-        cursor.execute(sentencia)
-        data = cursor.fetchall()
-
-        db.close()
-        user = {
-            "id": data[0][0],
-            "name": data[0][1],
-            "rol": data[0][3],
-            "email": data[0][4]
-        }
-        login = 1
-    else:
-        print('no hay sesion hdp')
-        login = 0
-    return render_template('home.html', session = {"login": login, "user": user})
+    tempSession = getCurrentUser()
+    return render_template('home.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 
 @app.route("/home")
@@ -88,24 +103,28 @@ def logged_page():
 
 @app.route("/feed")
 def feed_page():
-    return render_template('feedback.html')
+    tempSession = getCurrentUser()
+    return render_template('feedback.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 
 @app.route("/dashboard")
 @app.route("/dashboard/")
 @app.route("/dashboard/usuarios")
 def dashboard_page():
-    return render_template('user.dashboard.html')
+    tempSession = getCurrentUser()
+    return render_template('user.dashboard.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 
 @app.route("/dashboard/habitaciones")
 def dashboard_habitacion_page():
-    return render_template('habitacion.dashboard.html')
+    tempSession = getCurrentUser()
+    return render_template('habitacion.dashboard.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 
 @app.route("/test")
 def test_page():
-    return render_template('test.html')
+    tempSession = getCurrentUser()
+    return render_template('test.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 
 @app.route("/testhttp", methods=["GET", "POST"])
