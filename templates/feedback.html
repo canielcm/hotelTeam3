@@ -46,7 +46,7 @@ Feedback {% endblock title%} {% block stylecdn %}
   id="offcanvasBottom"
   aria-labelledby="offcanvasBottomLabel"
 >
-  <div class="offcanvas-body m-0 p-0">
+  <form class="offcanvas-body m-0 p-0" action="/comment" method="POST">
     <div class="bg-dark text-light p-3 mb-3">
       <h3 class="offcanvas-title text-center" id="offcanvasBottomLabel">
         Agrega un comentario
@@ -60,11 +60,12 @@ Feedback {% endblock title%} {% block stylecdn %}
             <select
               class="form-select w-50"
               aria-label="Default select example"
+              name="room"
             >
-              <option selected>Selecciona tu habitación</option>
-              <option value="1">001</option>
-              <option value="2">002</option>
-              <option value="3">003</option>
+            <option selected>Selecciona tu habitación</option>
+            {% for room in rooms %}
+              <option value={{room[0]}}>{{room[0]}}</option>
+            {% endfor %}
             </select>
           </div>
           <div class="rate">
@@ -85,7 +86,7 @@ Feedback {% endblock title%} {% block stylecdn %}
           <div class="mb-3">
             <h5>Hablanos de tu experiencia</h5>
             <textarea
-              name=""
+              name="comment"
               id=""
               cols="20"
               rows="6"
@@ -98,7 +99,7 @@ Feedback {% endblock title%} {% block stylecdn %}
         <button class="btn btn-primary w-100 p-2 mt-3">Enviar feedback</button>
       </div>
     </div>
-  </div>
+  </form>
 </div>
 
 {% endblock content %}

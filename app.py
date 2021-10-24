@@ -1,3 +1,4 @@
+import re
 from flask import Flask, render_template, request, session, url_for, redirect
 import sqlite3
 import hashlib
@@ -66,10 +67,41 @@ def index():
 def logged_page():
     return render_template('loggedIn.html')
 
+# def getInicio():
+#     conn=sqlite3.connect("baseTabla.db")
+#     c = conn.cursor()
+#     row=c.execute("SELECT * FROM tabla")
+#     resultado =c.fetchall()
+#     for res in resultado:
+#       print(res)
+#     conn.close()
+
+# Obtener las habitaciones
+def get_rooms():
+    conn=sqlite3.connect("hotel_db.db")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM room")
+    rows =cur.fetchall()
+    print("rows:",rows)
+    for res in rows:
+      print(res)
+    conn.close()
+    return {"rows": rows}
+
 
 @app.route("/feed")
 def feed_page():
-    return render_template('feedback.html')
+    rooms = get_rooms();
+    if request.method == "POST":
+        data = request.form
+        print(f'el usuario estaba en la habitación{data["room"]}')
+        print(f'le da un puntaje de {data["rate"]}')
+        print(f'y dice que {data["comment"]}')
+    if rooms:
+        print("estas son las habitaciones: ", rooms)
+        return render_template('feedback.html', rooms = rooms["rows"])
+    else:
+        return render_template('feedback.html', rooms=["No hay habitaciones disponibles"])
 
 
 @app.route("/dashboard")
@@ -83,6 +115,16 @@ def dashboard_page():
 def dashboard_habitacion_page():
     return render_template('habitacion.dashboard.html')
 
+@app.route("/comment", methods=["GET", "POST"])
+def add_comment():
+    data = request.form
+    print(f'el usuario estaba en la habitación{data["room"]}')
+    print(f'le da un puntaje de {data["rate"]}')
+    print(f'y dice que {data["comment"]}')
+    rooms=get_rooms()
+    print("***************ROOMS****************")
+    print(rooms)
+    return render_template('feedback.html')
 
 @app.route("/test")
 def test_page():
