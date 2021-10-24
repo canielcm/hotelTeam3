@@ -18,10 +18,8 @@
           </div>
           <div class="col">
             {% if estado %}
-            <strong class="text-success">DISPONIBLE</strong> {% else %}<strong
-              class="text-danger"
-              >NO DISPONIBLE</strong
-            >
+            <strong class="text-success">DISPONIBLE</strong> {% else %}<strong class="text-danger">NO
+              DISPONIBLE</strong>
             {% endif %}
           </div>
         </div>
@@ -37,14 +35,17 @@
 </div>
 <!-- endMacros -->
 
-{% if true %} {% extends 'models/main.model.html' %} {%else %} {% extends
+{% if false %} {% extends 'models/main.model.html' %} {%else %} {% extends
 'models/loggedIn.model.html' %} {% endif %} {% block title %} Home {% endblock
 title%} {% block stylecdn %}
 <link rel="stylesheet" href="../static/css/home.css" />
 {% endblock stylecdn %} {% block content %}
 <div class="banner"></div>
 <div class="card card-body">
-  session: {{session}}
+  session: {{session}},
+  {% if user%}
+  {{user}}
+  {% endif %}
 </div>
 <section>
   <div class="container-fluid p-4">
@@ -52,7 +53,8 @@ title%} {% block stylecdn %}
       <div class="col">
         <!-- cambiar las etiquetas h3 por unas semanticamente adecuadas -->
         <h3>
-          <strong>Bienvenido a <span class="text-primary">Hotel</span> {% if user %} {{user.email}} {% endif %} </strong>
+          <strong>Bienvenido a <span class="text-primary">Hotel</span> {% if user %} {{user.email}} {% endif %}
+          </strong>
         </h3>
         <p>
           Lorem ipsum dolor sit amet, consecte ur adipiscing elit. Aenean cursus
@@ -80,38 +82,22 @@ title%} {% block stylecdn %}
                 <input type="date" class="form-control" />
               </div>
               <div class="mx-2">
-                <button
-                  type="button"
-                  class="btn btn-primary w-100 mt-3"
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalAvailability"
-                >
+                <button type="button" class="btn btn-primary w-100 mt-3" data-bs-toggle="modal"
+                  data-bs-target="#modalAvailability">
                   Disponibilidad
                 </button>
               </div>
             </form>
             <!-- Modal Availability-->
-            <div
-              class="modal fade"
-              id="modalAvailability"
-              data-bs-backdrop="static"
-              data-bs-keyboard="false"
-              tabindex="-1"
-              aria-labelledby="staticBackdropLabel"
-              aria-hidden="true"
-            >
+            <div class="modal fade" id="modalAvailability" data-bs-backdrop="static" data-bs-keyboard="false"
+              tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">
                       Consultar disponibilidad
                     </h5>
-                    <button
-                      type="button"
-                      class="btn-close"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    ></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <div class="container">
@@ -142,15 +128,13 @@ title%} {% block stylecdn %}
                         <div class="col">
                           <div class="container">
                             <h5>Habitación seleccionada</h5>
-                            <div
-                              class="
+                            <div class="
                                 alert
                                 bg-dark
                                 text-light
                                 d-flex
                                 justify-content-between
-                              "
-                            >
+                              ">
                               <div class="ms-2">
                                 Número: <strong>002</strong>
                               </div>
@@ -159,20 +143,10 @@ title%} {% block stylecdn %}
                               </div>
                             </div>
                             <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="checkbox"
-                                value=""
-                                id="flexCheckIndeterminate"
-                              />
-                              <label
-                                class="form-check-label"
-                                for="flexCheckIndeterminate"
-                              >
-                                <small
-                                  >Acepto los
-                                  <a href="#">termonos y condiciones.</a></small
-                                >
+                              <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" />
+                              <label class="form-check-label" for="flexCheckIndeterminate">
+                                <small>Acepto los
+                                  <a href="#">termonos y condiciones.</a></small>
                               </label>
                             </div>
                             <button class="btn btn-primary w-100 mt-4">

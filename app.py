@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, session, url_for, redirect
 import sqlite3
-import hashlib
+
+from werkzeug.security import generate_password_hash,check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'nekomotsu9029'
@@ -10,10 +11,10 @@ def signin():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        #password = hashlib.sha256(password)
+        #password = generate_password_hash(password, 'sha256', 30)
         db = sqlite3.connect('hotel_db.db')
 
-        sentencia = "SELECT * FROM user where email='"+email+"' AND password='"+password+"'"
+        sentencia = "SELECT * FROM user where email='"+email+"'"
         
         cursor = db.cursor()
         cursor.execute(sentencia)
@@ -22,11 +23,15 @@ def signin():
         db.close()
 
         if(str(data) == "[]"):
-            message="Correo o Contraseña incorrectas :("
+            message="El correo no existe en nuestra bd :("
             return render_template('home.html', session = {"login": 0, "message": message})
         else:
-            session['email'] = email
-            return redirect(url_for('index'))
+            if(check_password_hash(data[0][4], password)):
+                session['email'] = email
+                return redirect(url_for('index'))
+            else:
+                message="La contraseña no coincide :("
+                return render_template('home.html', session = {"login": 0, "message": message})
 
 @app.route('/signUp', methods=["POST"])
 def signup():
@@ -39,7 +44,7 @@ def signup():
     #request.form['role']
     email = request.form['email']
     password = request.form['password']
-    #password = hashlib.sha256(password)
+    password = generate_password_hash(password, 'sha256', 30)
 
     sentencia = 'INSERT INTO user(name, role, email, password) VALUES("%s", "%s", "%s", "%s")' % (name, role, email, password)
 
@@ -54,12 +59,26 @@ def signup():
 def index():
     if 'email' in session:
         email = session['email']
-        print('sesion encontrada, Email:'+email)
+        db = sqlite3.connect('hotel_db.db')
+
+        sentencia = "SELECT * FROM user where email='"+email+"'"
+        
+        cursor = db.cursor()
+        cursor.execute(sentencia)
+        data = cursor.fetchall()
+
+        db.close()
+        user = {
+            "id": data[0][0],
+            "name": data[0][1],
+            "rol": data[0][3],
+            "email": data[0][4]
+        }
         login = 1
     else:
         print('no hay sesion hdp')
         login = 0
-    return render_template('home.html', session = {"login": login})
+    return render_template('home.html', session = {"login": login, "user": user})
 
 
 @app.route("/home")
