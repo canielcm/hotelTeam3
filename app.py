@@ -1,20 +1,56 @@
 import re
 from flask import Flask, render_template, request, session, url_for, redirect
 import sqlite3
-import hashlib
+
+from werkzeug.security import generate_password_hash,check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'nekomotsu9029'
+
+def getCurrentUser():
+    if 'email' in session:
+        email = session['email']
+        db = sqlite3.connect('hotel_db.db')
+
+        sentencia = "SELECT * FROM user where email='"+email+"'"
+        
+        cursor = db.cursor()
+        cursor.execute(sentencia)
+        data = cursor.fetchall()
+
+        db.close()
+
+        if(len(data) > 0):
+            user = {
+            "id": data[0][0],
+            "name": data[0][1],
+            "rol": data[0][3],
+            "email": data[0][4]
+            }
+            return {
+                "login": 1,
+                "user": user
+            }
+        else:
+            return {
+                "login": 0,
+                "user": ""
+            }
+    else:
+        return {
+            "login": 0,
+            "user": ""
+        }
 
 @app.route('/signIn', methods=["POST"])
 def signin():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        #password = hashlib.sha256(password)
+
         db = sqlite3.connect('hotel_db.db')
 
-        sentencia = "SELECT * FROM user where email='"+email+"' AND password='"+password+"'"
+        sentencia = "SELECT * FROM user where email='"+email+"'"
         
         cursor = db.cursor()
         cursor.execute(sentencia)
@@ -23,11 +59,15 @@ def signin():
         db.close()
 
         if(str(data) == "[]"):
-            message="Correo o Contraseña incorrectas :("
+            message="El correo no existe en nuestra bd :("
             return render_template('home.html', session = {"login": 0, "message": message})
         else:
-            session['email'] = email
-            return redirect(url_for('index'))
+            if(check_password_hash(data[0][4], password)):
+                session['email'] = email
+                return redirect(url_for('index'))
+            else:
+                message="La contraseña no coincide :("
+                return render_template('home.html', session = {"login": 0, "message": message})
 
 @app.route('/signUp', methods=["POST"])
 def signup():
@@ -40,7 +80,7 @@ def signup():
     #request.form['role']
     email = request.form['email']
     password = request.form['password']
-    #password = hashlib.sha256(password)
+    password = generate_password_hash(password, 'sha256', 30)
 
     sentencia = 'INSERT INTO user(name, role, email, password) VALUES("%s", "%s", "%s", "%s")' % (name, role, email, password)
 
@@ -53,14 +93,8 @@ def signup():
 
 @app.route('/')
 def index():
-    if 'email' in session:
-        email = session['email']
-        print('sesion encontrada, Email:'+email)
-        login = 1
-    else:
-        print('no hay sesion hdp')
-        login = 0
-    return render_template('home.html', session = {"login": login})
+    tempSession = getCurrentUser()
+    return render_template('home.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 
 @app.route("/home")
@@ -91,7 +125,8 @@ def get_rooms():
 
 @app.route("/feed")
 def feed_page():
-    rooms = get_rooms();
+    rooms = get_rooms()
+    tempSession = getCurrentUser()
     if request.method == "POST":
         data = request.form
         print(f'el usuario estaba en la habitación{data["room"]}')
@@ -99,21 +134,25 @@ def feed_page():
         print(f'y dice que {data["comment"]}')
     if rooms:
         print("estas son las habitaciones: ", rooms)
-        return render_template('feedback.html', rooms = rooms["rows"])
+        return render_template('feedback.html', rooms = rooms["rows"], session = {"login": tempSession["login"], "user": tempSession["user"]})
     else:
-        return render_template('feedback.html', rooms=["No hay habitaciones disponibles"])
+        return render_template('feedback.html', rooms=["No hay habitaciones disponibles"], session = {"login": tempSession["login"], "user": tempSession["user"]})
+    
+    
 
 
 @app.route("/dashboard")
 @app.route("/dashboard/")
 @app.route("/dashboard/usuarios")
 def dashboard_page():
-    return render_template('user.dashboard.html')
+    tempSession = getCurrentUser()
+    return render_template('user.dashboard.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 
 @app.route("/dashboard/habitaciones")
 def dashboard_habitacion_page():
-    return render_template('habitacion.dashboard.html')
+    tempSession = getCurrentUser()
+    return render_template('habitacion.dashboard.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 @app.route("/comment", methods=["GET", "POST"])
 def add_comment():
@@ -128,7 +167,8 @@ def add_comment():
 
 @app.route("/test")
 def test_page():
-    return render_template('test.html')
+    tempSession = getCurrentUser()
+    return render_template('test.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 
 @app.route("/testhttp", methods=["GET", "POST"])
