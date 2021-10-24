@@ -3,7 +3,7 @@
   <div class="card mb-2">
     <div class="card-body">
       <h5 class="card-title">{{name}}</h5>
-      <h6 class="card-subtitle mb-2 text-muted">{{number}}</h6>
+      <h6 class="card-subtitle mb-2 text-muted">Habitación: {{number}}</h6>
       {% for i in range(rating) %} <label class="star" title="text"></label> {% endfor %}
       <p class="card-text">
         {{text}}
@@ -36,9 +36,11 @@ Feedback {% endblock title%} {% block stylecdn %}
       </div>
     </div>
   </div>
-
-  {{feedback()}}
-  {{feedback("003", 4, "José")}}
+  <div class="container">
+    {%for comment in comments %}
+    {{feedback(comment[1],comment[3],comment[0],comment[2] )}}
+    {% endfor %}
+  </div>
 </div>
 <div
   class="offcanvas offcanvas-bottom offcanvas-xl"
@@ -46,7 +48,7 @@ Feedback {% endblock title%} {% block stylecdn %}
   id="offcanvasBottom"
   aria-labelledby="offcanvasBottomLabel"
 >
-  <form class="offcanvas-body m-0 p-0" action="/comment" method="POST">
+  <form class="offcanvas-body m-0 p-0" action="/feed" method="POST">
     <div class="bg-dark text-light p-3 mb-3">
       <h3 class="offcanvas-title text-center" id="offcanvasBottomLabel">
         Agrega un comentario

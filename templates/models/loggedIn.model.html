@@ -58,16 +58,21 @@
                   ><strong>Social</strong></a
                 >
               </li>
+              {% if session.user.role =="admin" %}
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/dashboard"
                   ><strong>Dashboard</strong></a
                 >
               </li>
+              {% endif %}
             </ul>
             <div class="">
               <button
                 class="btn text-primary me-2"
                 type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight"
               >
                 <strong>Hola, {{session.user.name}}</strong>
               </button>
@@ -77,6 +82,30 @@
       </nav>
 
       {% block content %} {% endblock content %}
+      <div
+        class="offcanvas offcanvas-end bg-dark opacity-75 text-light"
+        tabindex="-1"
+        id="offcanvasRight"
+        aria-labelledby="offcanvasRightLabel"
+      >
+        <div class="offcanvas-header">
+          <h5 id="offcanvasRightLabel">Hola, {{session.user.name}}</h5>
+          <button
+            type="button"
+            class="btn-close text-reset"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="offcanvas-body">
+          <div class="container opacity-100">
+            <form action="/logout">
+              <h5 class="text center " >¿Quieres cerrar sesión?</h5>
+              <button class="btn btn-danger w-100" data-bs-dismiss="offcanvas">cerrar sesión</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </main>
     <footer class="footerMain bg-primary">
       <div class="bg-primary text-light">

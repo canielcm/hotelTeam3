@@ -24,8 +24,8 @@ def getCurrentUser():
             user = {
             "id": data[0][0],
             "name": data[0][1],
-            "rol": data[0][3],
-            "email": data[0][4]
+            "role": data[0][2],
+            "email": data[0][3]
             }
             return {
                 "login": 1,
@@ -91,6 +91,14 @@ def signup():
     session['email'] = email
     return redirect(url_for('index'))
 
+@app.route('/logout')
+def logout():
+    print("logout")
+    if 'email' in session:
+        session.pop('email', None)
+        pass
+    return redirect(url_for('index'))
+
 @app.route('/')
 def index():
     tempSession = getCurrentUser()
@@ -121,25 +129,46 @@ def get_rooms():
       print(res)
     conn.close()
     return {"rows": rows}
+def get_comments():
+    conn=sqlite3.connect("hotel_db.db")
+    cur = conn.cursor()
+    cur.execute("SELECT name, id_room, message, rating FROM comments inner join user using (id_user)")
+    rows =cur.fetchall()
+    print("rows:",rows)
+    for res in rows:
+      print(res)
+    conn.close()
+    return {"rows": rows}
 
-
-@app.route("/feed")
+@app.route("/feed", methods=["GET","POST"])
 def feed_page():
-    rooms = get_rooms()
     tempSession = getCurrentUser()
+    user = tempSession["user"]
     if request.method == "POST":
         data = request.form
-        print(f'el usuario estaba en la habitación{data["room"]}')
-        print(f'le da un puntaje de {data["rate"]}')
-        print(f'y dice que {data["comment"]}')
+        if(user):
+            print(f'El usuario {user["name"]}')
+            print(f'el usuario estaba en la habitación{data["room"]}')
+            print(f'le da un puntaje de {data["rate"]}')
+            print(f'y dice que {data["comment"]}')
+            # Connect to db
+            db = sqlite3.connect('hotel_db.db')
+            cursor = db.cursor()
+
+            # Insert data into db
+            cursor.execute('INSERT INTO comments(id_user, id_room, message, rating) VALUES("%s", "%s","%s","%s")' % (user["id"],request.form["room"],request.form["comment"] ,request.form["rate"]))
+            db.commit()
+
+            # Close db connection
+            db.close()
+    rooms = get_rooms()
+    comments = get_comments()
     if rooms:
         print("estas son las habitaciones: ", rooms)
-        return render_template('feedback.html', rooms = rooms["rows"], session = {"login": tempSession["login"], "user": tempSession["user"]})
+        return render_template('feedback.html', rooms = rooms["rows"],comments = comments["rows"][::-1] , session = {"login": tempSession["login"], "user": tempSession["user"]})
     else:
-        return render_template('feedback.html', rooms=["No hay habitaciones disponibles"], session = {"login": tempSession["login"], "user": tempSession["user"]})
+        return render_template('feedback.html', rooms=["No hay habitaciones disponibles"], comments = comments["rows"],session = {"login": tempSession["login"], "user": tempSession["user"]})
     
-    
-
 
 @app.route("/dashboard")
 @app.route("/dashboard/")
@@ -154,8 +183,8 @@ def dashboard_habitacion_page():
     tempSession = getCurrentUser()
     return render_template('habitacion.dashboard.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
 
-@app.route("/comment", methods=["GET", "POST"])
-def add_comment():
+@app.route("/disponibility", methods=["GET", "POST"])
+def look_for_disponibility():
     data = request.form
     print(f'el usuario estaba en la habitación{data["room"]}')
     print(f'le da un puntaje de {data["rate"]}')
@@ -196,5 +225,17 @@ def rest_http():
 def about_page(username):
     return f'<h1>About page of {username}</h1>'
 
+#q se ejeucte algo antes de cualquier peticion
+# como un mildelware
+@app.before_request
+def cargarSelect():
+    tempSession = getCurrentUser()
+    logged = tempSession["login"]
+    user = tempSession["user"]
+    if logged==0 and request.endpoint in ["feed_page", "dashboard_page", "dashboard_habitacion_page"]:
+        return redirect(url_for("index"))
+    if logged==1:
+        if user["role"]!="admin" and request.endpoint in ["dashboard_page", "dashboard_habitacion_page"]:
+            return redirect(url_for("index"))
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
