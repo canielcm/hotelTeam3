@@ -102,7 +102,8 @@ def logout():
 @app.route('/')
 def index():
     tempSession = getCurrentUser()
-    return render_template('home.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
+    rooms = get_rooms()
+    return render_template('home.html', session = {"login": tempSession["login"], "user": tempSession["user"]}, rooms = rooms['rows'])
 
 
 @app.route("/home")
@@ -123,7 +124,7 @@ def get_rooms():
     conn=sqlite3.connect("hotel_db.db")
     cur = conn.cursor()
     cur.execute("SELECT * FROM room")
-    rows =cur.fetchall()
+    rows = cur.fetchall()
     print("rows:",rows)
     for res in rows:
       print(res)
@@ -168,7 +169,18 @@ def feed_page():
         return render_template('feedback.html', rooms = rooms["rows"],comments = comments["rows"][::-1] , session = {"login": tempSession["login"], "user": tempSession["user"]})
     else:
         return render_template('feedback.html', rooms=["No hay habitaciones disponibles"], comments = comments["rows"],session = {"login": tempSession["login"], "user": tempSession["user"]})
-    
+
+@app.route('/rooms')
+def get_rooms2():
+    conn=sqlite3.connect("hotel_db.db")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM room")
+    rows = cur.fetchall()
+    print("rows:",rows)
+    for res in rows:
+      print(res)
+    conn.close()
+    return {"rows": rows}
 
 @app.route("/dashboard")
 @app.route("/dashboard/")

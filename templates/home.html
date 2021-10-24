@@ -36,7 +36,7 @@
 <!-- endMacros -->
 
 {% if session.login == 0 %} {% extends 'models/main.model.html' %} {%else %} {% extends
-'models/loggedIn.model.html' %} {% endif %} {% block title %} Home {% endblock
+'models/loggedIn.model.html' %} {% endif %} {% block title %} me {% endblock
 title%} {% block stylecdn %}
 <link rel="stylesheet" href="../static/css/home.css" />
 {% endblock stylecdn %} {% block content %}
@@ -119,28 +119,20 @@ title%} {% block stylecdn %}
                               </button>
                             </div>
                           </div>
-                          <div class="mt-5">
+                          <div id="habitacionesDisponibles" class="mt-5">
                             <h5>Habitaciones disponibles</h5>
-                            <div>{{newComponent('001', true)}}</div>
-                            <div>{{newComponent('002', true)}}</div>
+
+                            {% for room in rooms %}
+                            <div id="{{room[0]}}" class="boton_habitacion_disponible">{{newComponent(room[0], true)}}
+                            </div>
+                            {% endfor %}
                           </div>
                         </div>
                         <div class="col">
                           <div class="container">
                             <h5>Habitación seleccionada</h5>
-                            <div class="
-                                alert
-                                bg-dark
-                                text-light
-                                d-flex
-                                justify-content-between
-                              ">
-                              <div class="ms-2">
-                                Número: <strong>002</strong>
-                              </div>
-                              <div>
-                                <button class="btn-danger btn">eliminar</button>
-                              </div>
+                            <div id="contenedorHabitacionSeleccionada">
+                              
                             </div>
                             <div class="form-check">
                               <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" />
@@ -166,4 +158,5 @@ title%} {% block stylecdn %}
     </div>
   </div>
 </section>
+<script src="../../static/js/app.js"></script>
 {% endblock content %}
