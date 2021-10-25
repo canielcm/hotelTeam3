@@ -3,6 +3,7 @@ import re
 from flask import Flask, render_template, request, session, url_for, redirect
 import sqlite3
 from flask_cors import CORS, cross_origin
+from datetime import date
 
 from werkzeug.security import generate_password_hash,check_password_hash
 
@@ -153,7 +154,7 @@ def room_availability(startDate,targetDate):
     cursor = db.cursor()
 
     # get data into db
-    cursor.execute('select id_room FROM room where state=1 AND id_room not in(select id_room from reservation where startDate between "%s" and "%s" OR targetDate between "%s" and "%s" OR "%s" between startDate and targetDate OR "%s" between startDate and targetDate);' % (startDate,targetDate,startDate,targetDate,startDate,targetDate))
+    cursor.execute('select id_room FROM room where id_room not in(select id_room from reservation where visibility==0 OR state==0 OR startDate between "%s" and "%s" OR targetDate between "%s" and "%s" OR "%s" between startDate and targetDate OR "%s" between startDate and targetDate );' % (startDate,targetDate,startDate,targetDate,startDate,targetDate))
     rows =cursor.fetchall()
     # Close db connection
     db.close()
@@ -275,10 +276,57 @@ def dashboard_Delete(id):
     tempSession = getCurrentUser()
     return render_template('user.dashboard.html',users=users ,session = {"login": tempSession["login"], "user": tempSession["user"]})
 
-@app.route("/dashboard/habitaciones")
+def get_room():
+    conn=sqlite3.connect("hotel_db.db")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM room")
+    rows = cur.fetchall()
+    print("rows:",rows)
+    for res in rows:
+      print(res)
+    conn.close()
+    return rows
+
+def add_room(state, visibility, floor):
+    # Connect to db
+    db = sqlite3.connect('hotel_db.db')
+    cursor = db.cursor()
+
+    # Insert data into db
+    cursor.execute('INSERT INTO room(state, visibility, floor) VALUES("%s", "%s","%s")' % (state, visibility, floor))
+    db.commit()
+
+    # Close db connection
+    db.close()
+def delete_room(room_id):
+    # Connect to db
+    db = sqlite3.connect('hotel_db.db')
+    cursor = db.cursor()
+    # delete data into db
+    cursor.execute('DELETE FROM room WHERE id_room ="%s"' % (room_id))
+    db.commit()
+    # Close db connection
+    db.close()
+
+def update_room(room_id, state, visibility, floor):
+    # Connect to db
+    db = sqlite3.connect('hotel_db.db')
+    cursor = db.cursor()
+    # update data into db
+    cursor.execute('UPDATE room SET state ="%s", visibility="%s", floor="%s" WHERE id_user ="%s"' % (state, visibility, floor, room_id))
+    db.commit()
+    # Close db connection
+    db.close()
+@app.route("/dashboard/habitaciones", methods=["GET", "POST"])
 def dashboard_habitacion_page():
+    if request.method == "POST":
+        state=request.form["state"]
+        visibility=request.form["visibility"]
+        floor=request.form["floor"]
+        add_room(state, visibility, floor)
+    rooms=get_room()
     tempSession = getCurrentUser()
-    return render_template('habitacion.dashboard.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
+    return render_template('habitacion.dashboard.html',rooms=rooms, session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 @app.route("/disponibility", methods=["GET", "POST"])
 def look_for_disponibility():
@@ -291,6 +339,31 @@ def look_for_disponibility():
     print(rooms)
     return render_template('feedback.html')
 
+def addPrice(row):
+    vec = list(row)
+    print(f'xxxxxxxxx', row[2])
+    start = row[2].split("-")
+    end = row[3].split("-")
+    print(f'xxxxxxxxx', start, end)
+    d0 = date(int(start[0]), int(start[1]), int(start[2]))
+    d1 = date(int(end[0]), int(end[1]), int(end[2]))
+    delta = d1 - d0
+    print("XXXXXXXXXXXXXXXXX vec: ", vec)
+    vec.append((delta.days+1)*100000)
+    return vec
+@app.route("/reservation", methods=["GET", "POST"])
+def reservation_page():
+    tempSession = getCurrentUser()
+    id_user = tempSession["user"]["id"]
+    conn=sqlite3.connect("hotel_db.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM reservation WHERE id_user ="%s" ORDER BY startDate ' % (id_user))
+    rows = cur.fetchall()
+    conn.close()
+    length = len(rows)
+    rows=list(rows)[::-1]
+    newRows= map(addPrice, rows)
+    return render_template('reservation.html',len=length, rows=newRows, session = {"login": tempSession["login"], "user": tempSession["user"]})
 @app.route("/test")
 def test_page():
     tempSession = getCurrentUser()

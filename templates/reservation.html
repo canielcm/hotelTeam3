@@ -1,0 +1,40 @@
+
+{% macro miCard(number=000, startDate='xxxx-xx-xx', targetDate='xxxx-xx-xx', price=0) -%}
+<div class="card bg-dark text-light m-2 p-4">
+    <div class="container">
+        <div class="row">
+            <div class="col"><strong class="text-primary">Numero de habitación: </strong>{{number}}</div>
+            <div class="col">
+                <div>
+                    <div>
+                        <strong class="text-primary">Desde: </strong> {{startDate}}
+                    </div>
+                    <div>
+                        <strong class="text-primary">Hasta: </strong> {{targetDate}}
+                    </div>
+                </div>
+            </strong></div>
+            <div class="col"><strong class="text-primary">Valor: $ </strong> {{price}}</div>
+        </div>
+    </div>
+</div>
+{%- endmacro %}
+<!-- endMacros -->
+
+
+{% extends 'models/loggedIn.model.html' %} 
+{% block title %} reservaciones{% endblock title %}
+{% block content %} 
+ <div class="container">
+    
+    {% if len>0 %}
+        {% for item in rows %}
+            {{miCard(item[1],item[2],item[3], item[5])}} 
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-danger mt-4 text-center">
+            Usted no tiene reservaciones
+        </div>
+    {% endif %}
+ </div>
+{% endblock content %}

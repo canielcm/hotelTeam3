@@ -1,8 +1,11 @@
 <!-- macros -->
 <div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.23.0/axios.min.js"
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.23.0/axios.min.js"
     integrity="sha512-Idr7xVNnMWCsgBQscTSCivBNWWH30oo/tzYORviOCrLKmBaRxRflm2miNhTFJNVmXvCtzgms5nlJF4az2hiGnA=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
   {% macro newComponent(numero, estado) -%}
   <div class="container bg-dark text-light rounded-3 px-3 pt-1 mb-1">
     <div class="row">
@@ -21,8 +24,10 @@
           </div>
           <div class="col">
             {% if estado %}
-            <strong class="text-success">DISPONIBLE</strong> {% else %}<strong class="text-danger">NO
-              DISPONIBLE</strong>
+            <strong class="text-success">DISPONIBLE</strong> {% else %}<strong
+              class="text-danger"
+              >NO DISPONIBLE</strong
+            >
             {% endif %}
           </div>
         </div>
@@ -38,9 +43,9 @@
 </div>
 <!-- endMacros -->
 
-{% if session.login == 0 %} {% extends 'models/main.model.html' %} {%else %} {% extends
-'models/loggedIn.model.html' %} {% endif %} {% block title %} me {% endblock
-title%} {% block stylecdn %}
+{% if session.login == 0 %} {% extends 'models/main.model.html' %} {%else %} {%
+extends 'models/loggedIn.model.html' %} {% endif %} {% block title %} home {%
+endblock title%} {% block stylecdn %}
 <link rel="stylesheet" href="../static/css/home.css" />
 {% endblock stylecdn %} {% block content %}
 <div class="banner"></div>
@@ -50,7 +55,9 @@ title%} {% block stylecdn %}
       <div class="col">
         <!-- cambiar las etiquetas h3 por unas semanticamente adecuadas -->
         <h3>
-          <strong>Bienvenido a <span class="text-primary">Hotel</span> {% if user %} {{user.email}} {% endif %}
+          <strong
+            >Bienvenido a <span class="text-primary">Hotel</span> {% if user %}
+            {{user.email}} {% endif %}
           </strong>
         </h3>
         <p>
@@ -72,29 +79,54 @@ title%} {% block stylecdn %}
             <form action="">
               <div class="m-2">
                 <span>desde</span>
-                <input type="date" onchange="cambioFechaDesdePrincipal()"class="form-control" />
+                <input
+                  type="date"
+                  onchange="cambioFechaDesdePrincipal()"
+                  class="form-control"
+                />
               </div>
               <div class="m-2 mt-3">
                 <span>hasta</span>
-                <input type="date" onchange="cambioFechaHastaPrincipal()"class="form-control" />
+                <input
+                  type="date"
+                  onchange="cambioFechaHastaPrincipal()"
+                  class="form-control"
+                />
               </div>
               <div class="mx-2">
-                <button type="button" class="btn btn-primary w-100 mt-3" data-bs-toggle="modal"
-                  data-bs-target="#modalAvailability">
+                <button
+                  type="button"
+                  class="btn btn-primary w-100 mt-3"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalAvailability"
+                >
                   Disponibilidad
                 </button>
               </div>
             </form>
             <!-- Modal Availability-->
-            <div class="modal fade" id="modalAvailability" data-bs-backdrop="static" data-bs-keyboard="false"
-              tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div
+              class="modal fade"
+              id="modalAvailability"
+              data-bs-backdrop="static"
+              data-bs-keyboard="false"
+              tabindex="-1"
+              aria-labelledby="staticBackdropLabel"
+              aria-hidden="true"
+            >
               <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">
                       Consultar disponibilidad
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button
+                      id="btn-close"
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
                   </div>
                   <div class="modal-body">
                     <div class="container">
@@ -105,11 +137,19 @@ title%} {% block stylecdn %}
                             <div>
                               <div class="mb-2">
                                 <span>Desde: </span>
-                                <input type="date" onchange="cambioFechaDesdeModal()" class="form-control" />
+                                <input
+                                  type="date"
+                                  onchange="cambioFechaDesdeModal()"
+                                  class="form-control"
+                                />
                               </div>
                               <div class="mb-2">
                                 <span>Hasta: </span>
-                                <input type="date" onchange="cambioFechaHastaModal()" class="form-control" />
+                                <input
+                                  type="date"
+                                  onchange="cambioFechaHastaModal()"
+                                  class="form-control"
+                                />
                               </div>
                               <button class="w-100 btn btn-primary">
                                 Disponibilidad
@@ -121,29 +161,47 @@ title%} {% block stylecdn %}
 
                             <div id="habitacionesDisponibles">
                               {% for room in rooms %}
-                              <div id="{{room[0]}}" class="boton_habitacion_disponible">{{newComponent(room[0], true)}}
+                              <div
+                                id="{{room[0]}}"
+                                class="boton_habitacion_disponible"
+                              >
+                                {{newComponent(room[0], true)}}
                               </div>
                               {% endfor %}
                             </div>
-
                           </div>
                         </div>
                         <div class="col">
                           <div class="container">
                             <h5>Habitación seleccionada</h5>
-                            <div id="contenedorHabitacionSeleccionada">
+                            <div id="contenedorHabitacionSeleccionada"></div>
 
-                            </div>
+                            {% if session.login==1 %}
                             <div class="form-check">
-                              <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" />
-                              <label class="form-check-label" for="flexCheckIndeterminate">
-                                <small>Acepto los
-                                  <a href="#">termonos y condiciones.</a></small>
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="flexCheckIndeterminate"
+                              />
+                              <label
+                                class="form-check-label"
+                                for="flexCheckIndeterminate"
+                              >
+                                <small
+                                  >Acepto los
+                                  <a href="#">termonos y condiciones.</a></small
+                                >
                               </label>
                             </div>
                             <button class="btn btn-primary w-100 mt-4">
                               <strong>RESERVAR</strong>
                             </button>
+                            {% else %}
+                            <div class="alert alert-primary text-center">
+                              Inicia sesión para reservar
+                            </div>
+                            {% endif %}
                           </div>
                         </div>
                       </div>
@@ -157,8 +215,7 @@ title%} {% block stylecdn %}
       </div>
     </div>
   </div>
+  <div class="card">{{session}}</div>
 </section>
 <script src="../../static/js/app.js"></script>
 {% endblock content %}
-
-
