@@ -1,150 +1,202 @@
 <!--Macros-->
 <div>
-    {% macro cardUsers(nombre="usuario 1", id="001", telefono="+57 322333434") -%}
-        <div class="row bg-dark text-white mt-2 rounded-3  ">
-                <div class="col-md-6 p-2">
-                <div class="row p-0 m-0">
-                    <div class="col">
-                    <p>Nombre:</p>
-                    </div>
-                    <div class="col">
-                    <strong>{{nombre}}</strong>
-                    </div>
-                </div>
-                <div class="row p-0 m-0">
-                    <div class="col">
-                    <p>ID usuario:</p>
-                    </div>
-                    <div class="col">
-                    <strong>{{id}}</strong>
-                    </div>
-                </div>
-                <div class="row p-0 m-0">
-                    <div class="col">
-                    <p>telefono:</p>
-                    </div>
-                    <div class="col">
-                    <strong>{{telefono}}</strong>
-                    </div>
-                </div>
-                </div>
-                <div class="col-md-4 offset-2">
-                <div class="d-flex justify-content-end mt-4 me-4">
-                    <button 
-                        class="btn"
-                        data-bs-toggle="modal" 
-                        href="#editar" 
-                        role="button"
-                    >
-                        <svg width="50" height="50" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="31" cy="31" r="31" fill="#0477BF"/>
-                            <path d="M18.375 40.1562V45.625H23.8438L39.9729 29.4958L34.5042 24.0271L18.375 40.1562ZM44.2021 25.2667C44.7708 24.6979 44.7708 23.7792 44.2021 23.2104L40.7896 19.7979C40.2208 19.2292 39.3021 19.2292 38.7333 19.7979L36.0646 22.4667L41.5333 27.9354L44.2021 25.2667Z" fill="white"/>
-                        </svg>
-                    </button>
-                    <button 
-                        class="btn"
-                        data-bs-toggle="modal" 
-                        href="#delete" 
-                        role="button" 
-                    >
-                        <svg width="50" height="50" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="31" cy="31" r="31" fill="#FA4747"/>
-                            <path d="M21.75 42.7083C21.75 44.3125 23.0625 45.625 24.6667 45.625H36.3334C37.9375 45.625 39.25 44.3125 39.25 42.7083V25.2083H21.75V42.7083ZM40.7084 20.8333H35.6042L34.1459 19.375H26.8542L25.3959 20.8333H20.2917V23.75H40.7084V20.8333Z" fill="white"/>
-                        </svg>    
-                    </button>
-                </div>
-                </div>
+  {% macro cardUsers(name="usuario 1", id="001", email="user@gmail.com") -%}
+  <div class="row bg-dark text-white mt-2 rounded-3">
+    <div class="col-md-6 p-2">
+      <div class="row p-0 m-0">
+        <div class="col">
+          <p>Nombre:</p>
         </div>
-    {%- endmacro %}
+        <div class="col">
+          <strong>{{name}}</strong>
+        </div>
+      </div>
+      <div class="row p-0 m-0">
+        <div class="col">
+          <p>ID usuario:</p>
+        </div>
+        <div class="col">
+          <strong>{{id}}</strong>
+        </div>
+      </div>
+      <div class="row p-0 m-0">
+        <div class="col">
+          <p>Correo:</p>
+        </div>
+        <div class="col">
+          <strong>{{email}}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 offset-2">
+      <div class="d-flex justify-content-end mt-4 me-4">
+        <button
+          class="btn"
+          data-bs-toggle="modal"
+          href="#editar{{id}}"
+          role="button"
+        >
+          <svg
+            width="50"
+            height="50"
+            viewBox="0 0 62 62"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="31" cy="31" r="31" fill="#0477BF" />
+            <path
+              d="M18.375 40.1562V45.625H23.8438L39.9729 29.4958L34.5042 24.0271L18.375 40.1562ZM44.2021 25.2667C44.7708 24.6979 44.7708 23.7792 44.2021 23.2104L40.7896 19.7979C40.2208 19.2292 39.3021 19.2292 38.7333 19.7979L36.0646 22.4667L41.5333 27.9354L44.2021 25.2667Z"
+              fill="white"
+            />
+          </svg>
+        </button>
+        <button class="btn" data-bs-toggle="modal" href="#delete{{id}}" role="button">
+          <svg
+            width="50"
+            height="50"
+            viewBox="0 0 62 62"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="31" cy="31" r="31" fill="#FA4747" />
+            <path
+              d="M21.75 42.7083C21.75 44.3125 23.0625 45.625 24.6667 45.625H36.3334C37.9375 45.625 39.25 44.3125 39.25 42.7083V25.2083H21.75V42.7083ZM40.7084 20.8333H35.6042L34.1459 19.375H26.8542L25.3959 20.8333H20.2917V23.75H40.7084V20.8333Z"
+              fill="white"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!--Modal EDITAR-->
+  <div
+    class="modal fade"
+    id="editar{{id}}"
+    aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel"
+    tabindex="-1"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-xl border border-primary border-2 p-4">
+        <div class="row p-2">
+          <h5
+            class="modal-title col-11 text-primary text-center"
+            id="exampleModalToggleLabel"
+          >
+            Añadir Habitacion
+          </h5>
+          <button
+            type="button"
+            class="btn-close col-1"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form
+            method="POST"
+            action="{{ url_for('dashboard_page')}}"
+            class="row text-center"
+          >
+            <div class="col p-2">
+              <div class="mb-3">
+                <span>ID</span>
+                <input
+                  name="id"
+                  type="text"
+                  class="form-control"
+                  value="{{id}}"
+                />
+              </div>
+              <div class="mb-3">
+                <span>name</span>
+                <input
+                  name="name"
+                  type="text"
+                  class="form-control"
+                  value="{{name}}"
+                />
+              </div>
+
+              <div class="mb-3">
+                <span>email</span>
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  value="{{email}}"
+                />
+              </div>
+            </div>
+
+            <button class="btn bg-primary text-white" type="submit">
+              Actualizar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--End Modal-->
+  <!-- Modal DELETE -->
+  <div
+    class="modal fade"
+    id="delete{{id}}"
+    aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel"
+    tabindex="-1"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-xl border border-danger border-2 p-4">
+        <div class="row p-2">
+          <h5
+            class="modal-title col-12 text-danger text-center"
+            id="exampleModalToggleLabel"
+          >
+            ¿Estas seguro de eliminar al Usuario con ID {{id}}?
+          </h5>
+        </div>
+        <div class="modal-body">
+          <form action="{{ url_for('dashboard_Delete',id=id)}}" class="row text-center">
+            <div class="col">
+              <span
+                >Confirme el ID "{{id}}" <strong class="text-danger">*</strong>
+              </span>
+              <input
+                type="text"
+                name="id"
+                value="{{id}}"
+                class="form-control my-2 w-50 mx-auto my-4"
+              />
+            </div>
+
+            <div class="row-12">
+              <button
+                type="button"
+                class="btn btn-primary col mx-2"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-danger text-white col mx-2">
+                Eliminar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Ende Model -->
+  {%- endmacro %}
 </div>
 <!-- End Macros-->
 
-{% extends 'models/dashboard.html' %} 
-{% block contentdash %}
+{% extends 'models/dashboard.html' %} {% block contentdash %}
 
-    <span class="display-6"> <b>Usuarios</b> </span>
-    <div>{{cardUsers()}}</div>
-    <div>{{cardUsers("usuario 2", "002")}}</div>
-    <div>{{cardUsers("usuario 3", "003")}}</div>
-    <div>{{cardUsers("usuario 4", "004")}}</div>
-    <div>{{cardUsers("usuario 5", "005")}}</div>
+<span class="display-6"> <b>Usuarios</b> </span>
 
-     <!--Modal AGREGAR-->
-     <div class="modal fade" id="editar" aria-hidden="true"      aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div 
-            class="modal-content 
-            modal-xl 
-            border
-            border-primary 
-            border-2
-            p-4
-            "
-            >
-            <div class="row p-2">
-              <h5 class="modal-title col-11 text-primary text-center" id="exampleModalToggleLabel">Añadir Habitacion</h5>
-              <button type="button" class="btn-close col-1" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div class="row text-center">
-                <div class="col p-2">
-
-                    <div class="mb-3">
-                        <span>Nombre</span>
-                        <input type="text" class="form-control" placeholder="Ej: Camilo">
-                    </div>
-
-                    <div class="mb-3">
-                        <span>telefono</span>
-                        <input type="number" class="form-control">
-                    </div>
-                    
-                </div>   
-
-                <button class="btn bg-primary text-white">Actualizar</button>
-              
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    <!--End Modal-->
-
-      <!--Modal Delete-->
-      <div class="modal fade" id="delete" aria-hidden="true"      aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div 
-            class="modal-content 
-            modal-xl 
-            border
-            border-danger 
-            border-2
-            p-4
-            "
-            >
-            <div class="row p-2">
-              <h5 class="modal-title col-12 text-danger text-center" id="exampleModalToggleLabel">¿Estas seguro de eliminar al Usuario con ID 001?</h5>
-            </div>
-            <div class="modal-body">
-              <div class="row text-center">
-                
-                <div class="col">
-                    <span>Confirme el ID 001 <strong class="text-danger">*</strong> </span>
-                    <input type="text" class="form-control my-2 w-50 mx-auto my-4">
-                </div>
-
-                <div class="row-12">
-
-                    <button type="button" class="btn btn-primary col mx-2" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
-                    <button class="btn btn-danger text-white col    mx-2">Eliminar</button>
-                
-                </div>
-              
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    <!--End Modal-->
-
-{% endblock contentdash %}
+{% for user in users %}
+<div>{{cardUsers(user[1], user[0], user[3])}}</div>
+{% endfor %} {% endblock contentdash %}

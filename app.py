@@ -150,7 +150,7 @@ def room_availability(startDate,targetDate):
     cursor = db.cursor()
 
     # get data into db
-    cursor.execute('select id_room FROM room where id_room not in(select id_room from reservation where startDate between "%s" and "%s" OR targetDate between "%s" and "%s" OR "%s" between startDate and targetDate OR "%s" between startDate and targetDate);' % (startDate,targetDate,startDate,targetDate,startDate,targetDate))
+    cursor.execute('select id_room FROM room where state=1 AND id_room not in(select id_room from reservation where startDate between "%s" and "%s" OR targetDate between "%s" and "%s" OR "%s" between startDate and targetDate OR "%s" between startDate and targetDate);' % (startDate,targetDate,startDate,targetDate,startDate,targetDate))
     rows =cursor.fetchall()
     # Close db connection
     db.close()
@@ -162,7 +162,7 @@ def add_reservation():
     targetDate = request.json["targetDate"]
     id_user = request.json["id_user"]
     id_room = request.json["id_room"]
-    state = 0
+    state = 1
     if startDate and targetDate and id_user and id_room:
         # Connect to db
         db = sqlite3.connect('hotel_db.db')
@@ -216,13 +216,60 @@ def get_rooms2():
     conn.close()
     return {"rows": rows}
 
-@app.route("/dashboard")
-@app.route("/dashboard/")
-@app.route("/dashboard/usuarios")
-def dashboard_page():
-    tempSession = getCurrentUser()
-    return render_template('user.dashboard.html', session = {"login": tempSession["login"], "user": tempSession["user"]})
+def get_user():
+    conn=sqlite3.connect("hotel_db.db")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM user")
+    rows = cur.fetchall()
+    print("rows:",rows)
+    for res in rows:
+      print(res)
+    conn.close()
+    return rows
+def delete_user(user_id):
+    # Connect to db
+    db = sqlite3.connect('hotel_db.db')
+    cursor = db.cursor()
+    # delete data into db
+    cursor.execute('DELETE FROM user WHERE id_user ="%s"' % (user_id))
+    db.commit()
+    # Close db connection
+    db.close()
 
+def update_user(user_id, name, email):
+    # Connect to db
+    db = sqlite3.connect('hotel_db.db')
+    cursor = db.cursor()
+    # update data into db
+    cursor.execute('UPDATE user SET name ="%s", email="%s" WHERE id_user ="%s"' % (name, email, user_id))
+    db.commit()
+    # Close db connection
+    db.close()
+
+@app.route("/dashboard/usuario", methods=["GET", "POST", "PUT"])
+def dashboard_page():
+    print("request.method:    ",request.method)
+    print("request.form",request.form)
+    if request.method=="POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        id = int(request.form["id"])
+        update_user(id, name, email)
+    
+    if request.method=="DELETE":
+        print("XXXXXXdeletingXXXXXXXX")
+        id = request.form["id"]
+        delete_user(id)
+    users = get_user()
+    tempSession = getCurrentUser()
+    return render_template('user.dashboard.html',users=users ,session = {"login": tempSession["login"], "user": tempSession["user"]})
+
+@app.route("/dashboard/usuario/<id>")
+def dashboard_Delete(id):
+    delete_user(id)
+    users = get_user()
+    tempSession = getCurrentUser()
+    return render_template('user.dashboard.html',users=users ,session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 @app.route("/dashboard/habitaciones")
 def dashboard_habitacion_page():
