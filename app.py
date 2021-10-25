@@ -2,10 +2,12 @@ from os import name
 import re
 from flask import Flask, render_template, request, session, url_for, redirect
 import sqlite3
+from flask_cors import CORS, cross_origin
 
 from werkzeug.security import generate_password_hash,check_password_hash
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'nekomotsu9029'
 
 def getCurrentUser():
@@ -143,6 +145,7 @@ def get_comments():
     conn.close()
     return {"rows": rows}
 
+@cross_origin
 @app.route("/room/<startDate>/<targetDate>")
 def room_availability(startDate,targetDate):
     # Connect to db
@@ -160,7 +163,7 @@ def room_availability(startDate,targetDate):
 def add_reservation():
     startDate = request.json["startDate"]
     targetDate = request.json["targetDate"]
-    id_user = request.json["id_user"]
+    id_user = getCurrentUser()["user"]["id"]
     id_room = request.json["id_room"]
     state = 1
     if startDate and targetDate and id_user and id_room:
@@ -175,6 +178,7 @@ def add_reservation():
         return {"message": "reservation added", "data":request.json}
     else:
         return {"message": "data missing"}
+
 
 @app.route("/feed", methods=["GET","POST"])
 def feed_page():
