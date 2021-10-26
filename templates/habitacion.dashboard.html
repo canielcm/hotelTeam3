@@ -1,11 +1,11 @@
 <!--Macros-->
 <div>
-  {% macro cardSales(id, state,visibility, floor ) -%}
+  {% macro cardSales(id, state,visibility, number ) -%}
   <div class="row bg-dark text-white mt-2 rounded-3">
     <div class="col-5 p-2">
       <div class="row p-0 m-0">
         <div class="col">
-          <p>Numero:</p>
+          <p>ID:</p>
         </div>
         <div class="col">
           <strong>{{id}}</strong>
@@ -17,9 +17,9 @@
         </div>
         <div class="col">
           {% if state=="1" %}
-            <strong class="text-success">DISPONIBLE</strong>
-            {% else %}
-            <strong class="text-danger">OCUPADA</strong>
+          <strong class="text-success">DISPONIBLE</strong>
+          {% else %}
+          <strong class="text-danger">OCUPADA</strong>
           {% endif %}
         </div>
       </div>
@@ -29,21 +29,26 @@
         </div>
         <div class="col">
           {% if visibility=="1" %}
-            <strong class="text-success">VISIBLE</strong>
-            {% else %}
-            <strong class="text-danger">NO VISIBLE</strong>
+          <strong class="text-success">VISIBLE</strong>
+          {% else %}
+          <strong class="text-danger">NO VISIBLE</strong>
           {% endif %}
         </div>
       </div>
     </div>
     <div class="col-4 p-2">
       <div>
-        <strong>Piso: {{floor}}</strong>
+        <strong>Número: {{number}}</strong>
       </div>
     </div>
     <div class="col-3 md-4">
       <div class="d-flex justify-content-end mt-4 me-4">
-        <button class="btn" data-bs-toggle="modal" href="#editar{{id}}" role="button">
+        <button
+          class="btn"
+          data-bs-toggle="modal"
+          href="#editar{{id}}"
+          role="button"
+        >
           <svg
             width="50"
             height="50"
@@ -58,7 +63,12 @@
             />
           </svg>
         </button>
-        <button class="btn" data-bs-toggle="modal" href="#delete{{id}}" role="button">
+        <button
+          class="btn"
+          data-bs-toggle="modal"
+          href="#delete{{id}}"
+          role="button"
+        >
           <svg
             width="50"
             height="50"
@@ -76,177 +86,159 @@
       </div>
     </div>
   </div>
-  <!--Modal AGREGAR-->
-<div
-class="modal fade"
-id="agregarHabitacion"
-aria-hidden="true"
-aria-labelledby="exampleModalToggleLabel"
-tabindex="-1"
->
-<div class="modal-dialog modal-dialog-centered">
-  <div class="modal-content modal-xl border border-primary border-2 p-4">
-    <div class="row p-2">
-      <h5
-        class="modal-title col-11 text-primary text-center"
-        id="exampleModalToggleLabel"
-      >
-        Añadir Habitacion
-      </h5>
-      <button
-        type="button"
-        class="btn-close col-1"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <form action="/dashboard/habitaciones" method="POST" class="row text-center">
-        <div class="col p-2">
-          <div class="mb-3">
-            <span>disponibilidad actual</span>
-            <select name="state" class="form-select" aria-label="Default select example">
-              <option value="1">diponible</option>
-              <option value="0">ocupado</option>
-            </select>
-          </div>
+  
+  <!--Modal EDIT-->
+  <div
+    class="modal fade"
+    id="editar{{id}}"
+    aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel"
+    tabindex="-1"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-xl border border-primary border-2 p-4">
+        <div class="row p-2">
+          <h5
+            class="modal-title col-11 text-primary text-center"
+            id="exampleModalToggleLabel"
+          >
+            Editar Habitacion
+          </h5>
+          <button
+            type="button"
+            class="btn-close col-1"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
+        <div class="modal-body">
+          <form
+            action="{{ url_for('dashboard_habitacion_update_delete',action='editar',id_room=id)}}"
+            method="POST"
+            class="row text-center"
+          >
+            <div class="col p-2">
+              <div class="mb-3">
+                <span>ID</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  value="{{id}}"
+                  name="id"
+                  disabled
+                />
+              </div>
 
-        <div class="col p-2">
-          <span>Estado</span>
-          <select name="visibility" class="form-select" aria-label="Default select example">
-            <option value="1">visible</option>
-            <option value="0">no visible</option>
-          </select>
-
-          <div class="mb-3">
-            <div class="mb-3">
-              <span>Planta</span>
-              <input name="floor" type="text" class="form-control" value="1" />
+              <div class="mb-3">
+                <span>Disponibilidad actual</span>
+                <select class="form-select" name="state">
+                  <option value="1" {% if state=="1" %} selected {% endif %}>
+                    disponible
+                  </option>
+                  <option value="0" {% if state=="0" %} selected {% endif %}>
+                    ocupada
+                  </option>
+                </select>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <button type="submit" class="btn bg-primary text-white">AGREGAR</button>
-      </form>
-    </div>
-  </div>
-</div>
-</div>
-<!--End Modal-->
+            <div class="col p-2">
+              <div class="mb-3">
+                <span>Número</span>
+                <input
+                  type="number"
+                  min="1"
+                  class="form-control"
+                  value="{{number}}"
+                  name="number"
+                />
+              </div>
 
-<!--Modal EDIT-->
-<div
-class="modal fade"
-id="editar{{id}}"
-aria-hidden="true"
-aria-labelledby="exampleModalToggleLabel"
-tabindex="-1"
->
-<div class="modal-dialog modal-dialog-centered">
-  <div class="modal-content modal-xl border border-primary border-2 p-4">
-    <div class="row p-2">
-      <h5
-        class="modal-title col-11 text-primary text-center"
-        id="exampleModalToggleLabel"
-      >
-        Editar Habitacion
-      </h5>
-      <button
-        type="button"
-        class="btn-close col-1"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <form action="{{ url_for('dashboard_habitacion_update_delete',action='editar',id_room=id)}}" method="POST" class="row text-center">
-        <div class="col p-2">
-          <div class="mb-3">
-            <span>Numero</span>
-            <input type="text" class="form-control" value="{{id}}" name="id" disabled />
-          </div>
-
-          <div class="mb-3">
-            <span>Disponibilidad actual</span>
-            <select class="form-select" name="state">
-              <option value="1" {% if state=="1" %} selected {% endif %}>disponible</option>
-              <option value="0" {% if state=="0" %} selected {% endif %}>ocupada</option>
-            </select>
-          </div>
-
-        </div>
-
-        <div class="col p-2">
-          <div class="mb-3">
-            <span>Planta</span>
-            <input type="number" min="1" class="form-control" value="{{floor}}" name="floor"/>
-          </div>
-
-          <div class="mb-3">
-            <span>Estado</span>
-            <select class="form-select" name="visibility" value="{{visibility}}">
-              <option value="1" {% if state=="1" %} selected {% endif %}>visible</option>
-              <option value="0"{% if state=="0" %} selected {% endif %}>no visible</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn bg-primary text-white" type="submit">ACTUALIZAR</button>
-      </form>
-    </div>
-  </div>
-</div>
-</div>
-<!--End Modal-->
-<!--Modal Delete-->
-<div
-  class="modal fade"
-  id="delete{{id}}"
-  aria-hidden="true"
-  aria-labelledby="exampleModalToggleLabel"
-  tabindex="-1"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content modal-xl border border-danger border-2 p-4">
-      <div class="row p-2">
-        <h5
-          class="modal-title col-12 text-danger text-center"
-          id="exampleModalToggleLabel"
-        >
-          ¿Estas seguro de eliminar la habitacion {{id}}?
-        </h5>
-      </div>
-      <div class="modal-body">
-        <form action="{{ url_for('dashboard_habitacion_update_delete',action='eliminar',id_room=id)}}" method="POST" class="row text-center">
-          <div class="col">
-            <span
-              >Confirme el ID {{id}} <strong class="text-danger">*</strong>
-            </span>
-            <input type="text" class="form-control my-2 w-50 mx-auto my-4" value="{{id}}" />
-          </div>
-
-          <div class="row-12">
-            <button
-              type="button"
-              class="btn btn-primary col mx-2"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            >
-              Cancelar
+              <div class="mb-3">
+                <span>Estado</span>
+                <select
+                  class="form-select"
+                  name="visibility"
+                  value="{{visibility}}"
+                >
+                  <option value="1" {% if state=="1" %} selected {% endif %}>
+                    visible
+                  </option>
+                  <option value="0" {% if state=="0" %} selected {% endif %}>
+                    no visible
+                  </option>
+                </select>
+              </div>
+            </div>
+            <button class="btn bg-primary text-white" type="submit">
+              ACTUALIZAR
             </button>
-            <button class="btn btn-danger text-white col mx-2" type="submit">Eliminar</button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<!--End Modal-->
+  <!--End Modal-->
+  <!--Modal Delete-->
+  <div
+    class="modal fade"
+    id="delete{{id}}"
+    aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel"
+    tabindex="-1"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-xl border border-danger border-2 p-4">
+        <div class="row p-2">
+          <h5
+            class="modal-title col-12 text-danger text-center"
+            id="exampleModalToggleLabel"
+          >
+            ¿Estas seguro de eliminar la habitacion {{id}}?
+          </h5>
+        </div>
+        <div class="modal-body">
+          <form
+            action="{{ url_for('dashboard_habitacion_update_delete',action='eliminar',id_room=id)}}"
+            method="POST"
+            class="row text-center"
+          >
+            <div class="col">
+              <span
+                >Confirme el ID {{id}} <strong class="text-danger">*</strong>
+              </span>
+              <input
+                type="text"
+                class="form-control my-2 w-50 mx-auto my-4"
+                value="{{id}}"
+              />
+            </div>
+
+            <div class="row-12">
+              <button
+                type="button"
+                class="btn btn-primary col mx-2"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancelar
+              </button>
+              <button class="btn btn-danger text-white col mx-2" type="submit">
+                Eliminar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--End Modal-->
   {%- endmacro %}
 </div>
 <!-- End Macros-->
 
 {% extends 'models/dashboard.html' %} {% block contentdash %}
+
 <div class="row">
   <div class="display-6 col-8"><b>Habitaciones</b></div>
   <div class="text-muted col-4 pt-3">
@@ -254,7 +246,7 @@ tabindex="-1"
     <button
       class="btn"
       data-bs-toggle="modal"
-      href="#agregarHabitacion"
+      href="#addroom"
       role="button"
     >
       <svg
@@ -272,10 +264,83 @@ tabindex="-1"
       </svg>
     </button>
   </div>
+  <!--Modal AGREGAR-->
+  <div
+    class="modal fade"
+    id="addroom"
+    aria-hidden="true"
+    aria-labelledby="exampleModalToggleLabel"
+    tabindex="-1"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-xl border border-primary border-2 p-4">
+        <div class="row p-2">
+          <h5
+            class="modal-title col-11 text-primary text-center"
+            id="exampleModalToggleLabel"
+          >
+            Añadir Habitacion
+          </h5>
+          <button
+            type="button"
+            class="btn-close col-1"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form
+            action="/dashboard/habitaciones"
+            method="POST"
+            class="row text-center"
+          >
+            <div class="col p-2">
+              <div class="mb-3">
+                <span>disponibilidad actual</span>
+                <select
+                  name="state"
+                  class="form-select"
+                  aria-label="Default select example"
+                >
+                  <option value="1">diponible</option>
+                  <option value="0">ocupado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col p-2">
+              <span>Estado</span>
+              <select
+                name="visibility"
+                class="form-select"
+                aria-label="Default select example"
+              >
+                <option value="1">visible</option>
+                <option value="0">no visible</option>
+              </select>
+
+              <div class="mb-3">
+                <div class="mb-3">
+                  <span>Número</span>
+                  <input
+                    name="number"
+                    type="number"
+                    class="form-control"
+                    min="1"
+                  />
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn bg-primary text-white">
+              AGREGAR
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--End Modal-->
 </div>
 
-{% for room in rooms %} 
-    {{cardSales(room[0],room[1],room[2],room[3])}} 
-{% endfor %}
-
-{% endblock contentdash %}
+{% for room in rooms %} {{cardSales(room[0],room[1],room[2],room[3])}} {% endfor
+%} {% endblock contentdash %}

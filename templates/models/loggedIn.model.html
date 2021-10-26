@@ -63,7 +63,7 @@
                   ><strong>Reservaciones</strong></a
                 >
               </li>
-              {% if session.user.role =="admin" %}
+              {% if session.user.role =="admin" or session.user.role =="superadmin" %}
               <li class="nav-item">
                 <a class="nav-link active"  href="/dashboard/usuario"
                   ><strong>Dashboard</strong></a

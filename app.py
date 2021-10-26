@@ -350,13 +350,13 @@ def get_room():
     conn.close()
     return rows
 
-def add_room(state, visibility, floor):
+def add_room(state, visibility, number):
     # Connect to db
     db = sqlite3.connect('hotel_db.db')
     cursor = db.cursor()
 
     # Insert data into db
-    cursor.execute('INSERT INTO room(state, visibility, floor) VALUES("%s", "%s","%s")' % (state, visibility, floor))
+    cursor.execute('INSERT INTO room(state, visibility, number) VALUES("%s", "%s","%s")' % (state, visibility, number))
     db.commit()
 
     # Close db connection
@@ -371,12 +371,12 @@ def delete_room(room_id):
     # Close db connection
     db.close()
 
-def update_room(room_id, state, visibility, floor):
+def update_room(room_id, state, visibility, number):
     # Connect to db
     db = sqlite3.connect('hotel_db.db')
     cursor = db.cursor()
     # update data into db
-    cursor.execute('UPDATE room SET state ="%s", visibility="%s", floor="%s" WHERE id_room ="%s"' % (state, visibility, floor, room_id))
+    cursor.execute('UPDATE room SET state ="%s", visibility="%s", number="%s" WHERE id_room ="%s"' % (state, visibility, number, room_id))
     db.commit()
     # Close db connection
     db.close()
@@ -385,8 +385,8 @@ def dashboard_habitacion_page():
     if request.method == "POST":
         state=request.form["state"]
         visibility=request.form["visibility"]
-        floor=request.form["floor"]
-        add_room(state, visibility, floor)
+        number=request.form["number"]
+        add_room(state, visibility, number)
     rooms=get_room()
     tempSession = getCurrentUser()
     return render_template('habitacion.dashboard.html',rooms=rooms, session = {"login": tempSession["login"], "user": tempSession["user"]})
@@ -397,8 +397,8 @@ def dashboard_habitacion_update_delete(action,id_room):
         if action=="editar":
             state=request.form["state"]
             visibility=request.form["visibility"]
-            floor=request.form["floor"]
-            update_room(id_room, state, visibility, floor)
+            number=request.form["number"]
+            update_room(id_room, state, visibility, number)
         elif action == "eliminar":
             delete_room(id_room)
     rooms=get_room()
@@ -495,7 +495,7 @@ def cargarSelect():
     if logged==0 and request.endpoint in ["feed_page", "dashboard_page", "dashboard_habitacion_page", "dashboard_admin_page", "dashboard_admin_create","dashboard_admin_delete"]:
         return redirect(url_for("index"))
     if logged==1:
-        if user["role"]!="admin" and request.endpoint in ["dashboard_page", "dashboard_habitacion_page", "dashboard_admin_page", "dashboard_admin_create","dashboard_admin_delete"]:
+        if user["role"]=="usuario" and request.endpoint in ["dashboard_page", "dashboard_habitacion_page", "dashboard_admin_page", "dashboard_admin_create","dashboard_admin_delete"]:
             return redirect(url_for("index"))
     if logged==1:
         if user["role"]!="superadmin" and request.endpoint in ["dashboard_admin_page", "dashboard_admin_create", "dashboard_admin_delete"]:
