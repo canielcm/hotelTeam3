@@ -1,6 +1,6 @@
 <!--Macros-->
 <div>
-  {% macro cardUsers(name="usuario 1", id="001", email="user@gmail.com") -%}
+  {% macro cardUsers(name="usuario 1", id="001", email="user@gmail.com", role="usuario") -%}
   <div class="row bg-dark text-white mt-2 rounded-3">
     <div class="col-md-6 p-2">
       <div class="row p-0 m-0">
@@ -50,7 +50,12 @@
             />
           </svg>
         </button>
-        <button class="btn" data-bs-toggle="modal" href="#delete{{id}}" role="button">
+        <button
+          class="btn"
+          data-bs-toggle="modal"
+          href="#delete{{id}}"
+          role="button"
+        >
           <svg
             width="50"
             height="50"
@@ -83,7 +88,7 @@
             class="modal-title col-11 text-primary text-center"
             id="exampleModalToggleLabel"
           >
-            Editar Usuario
+            Añadir Habitacion
           </h5>
           <button
             type="button"
@@ -95,7 +100,7 @@
         <div class="modal-body">
           <form
             method="POST"
-            action="{{ url_for('dashboard_page')}}"
+            action="{{ url_for('dashboard_admin_page')}}"
             class="row text-center"
           >
             <div class="col p-2">
@@ -127,6 +132,13 @@
                   value="{{email}}"
                 />
               </div>
+              <div class="mb-3">
+                <span>Rol <span class="text-danger">*</span> </span>
+                <select name="role" class="form-select">
+                  <option value="usuario" {%if role=="usuario" %} selected {% endif %}>usuario</option>
+                  <option value="admin"{%if role=="admin" %} selected {% endif %}>admin</option>
+                </select>
+              </div>
             </div>
 
             <button class="btn bg-primary text-white" type="submit">
@@ -157,7 +169,10 @@
           </h5>
         </div>
         <div class="modal-body">
-          <form action="{{ url_for('dashboard_Delete',id=id)}}" class="row text-center">
+          <form
+            action="{{ url_for('dashboard_admin_delete',id=id)}}"
+            class="row text-center"
+          >
             <div class="col">
               <span
                 >Confirme el ID "{{id}}" <strong class="text-danger">*</strong>
@@ -196,7 +211,80 @@
 {% extends 'models/dashboard.html' %} {% block contentdash %}
 
 <span class="display-6"> <b>Usuarios</b> </span>
-
+<div class="registerLink text-center text-primary mt-5 mb-3">
+  <button class="btn btn-primary" data-bs-toggle="modal" href="#modalRegister" role="button">REGISTRAR</button>
+</div>
 {% for user in users %}
-<div>{{cardUsers(user[1], user[0], user[3])}}</div>
-{% endfor %} {% endblock contentdash %}
+<div>{{cardUsers(user[1], user[0], user[3], user[2])}}</div>
+{% endfor %}
+<!-- Modal Register -->
+<div
+  class="modal fade"
+  id="modalRegister"
+  data-bs-backdrop="static"
+  aria-hidden="true"
+  aria-labelledby="exampleModalToggleLabel2"
+  tabindex="-1"
+>
+  <div class="modal-dialog modal-dialog-centered modalRegister">
+    <div class="modal-content border border-3 border-primary">
+      <div class="modal-header">
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <h5
+          class="modal-title text-primary text-center my-3"
+          id="staticBackdropLabel"
+        >
+          REGISTRAR USUARIO
+        </h5>
+        <div class="container">
+          <form action="/dashboard/admin/crear" method="POST">
+            <div class="row">
+              <div class="col-md-6 mb-md-4">
+                <span>Nombre <span class="text-danger">*</span></span>
+                <input type="text" name="name" class="form-control" />
+              </div>
+              <div class="col-md-6 mb-md-4">
+                <span>Correo <span class="text-danger">*</span></span>
+                <input type="email" name="email" class="form-control" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-md-4">
+                <span>Contraseña <span class="text-danger">*</span> </span>
+                <input type="password" name="password" class="form-control" />
+              </div>
+              <div class="col-md-6 mb-md-4">
+                <span
+                  >Escribe tu Contraseña otra vez
+                  <span class="text-danger">*</span>
+                </span>
+                <input type="password" name="password2" class="form-control" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-md-4">
+                <span>Rol <span class="text-danger">*</span> </span>
+                <select name="role" class="form-select">
+                  <option value="usuario">usuario</option>
+                  <option value="admin">admin</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-primary w-100 mt-4" type="submit">
+              <strong>REGISTRAR</strong>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock contentdash %}

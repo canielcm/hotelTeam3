@@ -154,7 +154,7 @@ def room_availability(startDate,targetDate):
     cursor = db.cursor()
 
     # get data into db
-    cursor.execute('select id_room FROM room where id_room not in(select id_room from reservation where visibility==0 OR state==0 OR startDate between "%s" and "%s" OR targetDate between "%s" and "%s" OR "%s" between startDate and targetDate OR "%s" between startDate and targetDate );' % (startDate,targetDate,startDate,targetDate,startDate,targetDate))
+    cursor.execute('select id_room FROM room where id_room not in(select id_room from reservation where visibility=="0" OR state=="0" OR startDate between "%s" and "%s" OR targetDate between "%s" and "%s" OR "%s" between startDate and targetDate OR "%s" between startDate and targetDate );' % (startDate,targetDate,startDate,targetDate,startDate,targetDate))
     rows =cursor.fetchall()
     # Close db connection
     db.close()
@@ -251,7 +251,17 @@ def update_user(user_id, name, email):
     # Close db connection
     db.close()
 
-@app.route("/dashboard/usuario", methods=["GET", "POST", "PUT"])
+def update_user_role(user_id,role):
+    # Connect to db
+    db = sqlite3.connect('hotel_db.db')
+    cursor = db.cursor()
+    # update data into db
+    cursor.execute('UPDATE user SET role="%s" WHERE id_user ="%s"' % (role, user_id))
+    db.commit()
+    # Close db connection
+    db.close()
+
+@app.route("/dashboard/usuario", methods=["GET", "POST"])
 def dashboard_page():
     print("request.method:    ",request.method)
     print("request.form",request.form)
@@ -260,17 +270,70 @@ def dashboard_page():
         email = request.form["email"]
         id = int(request.form["id"])
         update_user(id, name, email)
-    
-    if request.method=="DELETE":
-        print("XXXXXXdeletingXXXXXXXX")
-        id = request.form["id"]
-        delete_user(id)
     users = get_user()
     tempSession = getCurrentUser()
     return render_template('user.dashboard.html',users=users ,session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 @app.route("/dashboard/usuario/<id>")
 def dashboard_Delete(id):
+    delete_user(id)
+    users = get_user()
+    tempSession = getCurrentUser()
+    return render_template('user.dashboard.html',users=users ,session = {"login": tempSession["login"], "user": tempSession["user"]})
+
+def get_admins():
+    conn=sqlite3.connect("hotel_db.db")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM user WHERE role=='admin'")
+    rows = cur.fetchall()
+    print("rows:",rows)
+    for res in rows:
+      print(res)
+    conn.close()
+    return rows
+
+@app.route("/dashboard/admin", methods=["GET", "POST"])
+def dashboard_admin_page():
+    print("request.method:    ",request.method)
+    print("request.form",request.form)
+    if request.method=="POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        id = int(request.form["id"])
+        role = request.form["role"]
+        print("XXXXXXXXXXXXXX role:", role)
+        update_user_role(id, role)
+        update_user(id, name, email)
+    
+    if request.method=="DELETE":
+        id = request.form["id"]
+        delete_user(id)
+    users = get_admins()
+    tempSession = getCurrentUser()
+    return render_template('admins.dashboard.html',users=users ,session = {"login": tempSession["login"], "user": tempSession["user"]})
+@app.route('/dashboard/admin/crear', methods=["POST"])
+def dashboard_admin_create():
+    
+
+    name = request.form['name']
+    role = request.form['role']
+    email = request.form['email']
+    password = request.form['password']
+    password = generate_password_hash(password, 'sha256', 30)
+    #conectamos con la bd
+    db = sqlite3.connect('hotel_db.db')
+    cursor = db.cursor()
+
+    sentencia = 'INSERT INTO user(name, role, email, password) VALUES("%s", "%s", "%s", "%s")' % (name, role, email, password)
+    cursor.execute(sentencia)
+    db.commit()
+    db.close()
+    users = get_admins()
+    tempSession = getCurrentUser()
+    return render_template('admins.dashboard.html',users=users ,session = {"login": tempSession["login"], "user": tempSession["user"]})
+
+@app.route("/dashboard/admin/delete/<id>")
+def dashboard_admin_delete(id):
     delete_user(id)
     users = get_user()
     tempSession = getCurrentUser()
@@ -313,7 +376,7 @@ def update_room(room_id, state, visibility, floor):
     db = sqlite3.connect('hotel_db.db')
     cursor = db.cursor()
     # update data into db
-    cursor.execute('UPDATE room SET state ="%s", visibility="%s", floor="%s" WHERE id_user ="%s"' % (state, visibility, floor, room_id))
+    cursor.execute('UPDATE room SET state ="%s", visibility="%s", floor="%s" WHERE id_room ="%s"' % (state, visibility, floor, room_id))
     db.commit()
     # Close db connection
     db.close()
@@ -327,6 +390,33 @@ def dashboard_habitacion_page():
     rooms=get_room()
     tempSession = getCurrentUser()
     return render_template('habitacion.dashboard.html',rooms=rooms, session = {"login": tempSession["login"], "user": tempSession["user"]})
+
+@app.route("/dashboard/habitaciones/<action>/<id_room>", methods=["GET", "POST"])
+def dashboard_habitacion_update_delete(action,id_room):
+    if request.method == "POST":
+        if action=="editar":
+            state=request.form["state"]
+            visibility=request.form["visibility"]
+            floor=request.form["floor"]
+            update_room(id_room, state, visibility, floor)
+        elif action == "eliminar":
+            delete_room(id_room)
+    rooms=get_room()
+    tempSession = getCurrentUser()
+    return render_template('habitacion.dashboard.html',rooms=rooms, session = {"login": tempSession["login"], "user": tempSession["user"]})
+
+@app.route("/dashboard/reservaciones", methods=["GET", "POST"])
+def dashboard_reservaciones_page():
+    tempSession = getCurrentUser()
+    conn=sqlite3.connect("hotel_db.db")
+    cur = conn.cursor()
+    cur.execute('select name, id_room, startDate, targetDate, email from reservation INNER JOIN user USING (id_user)')
+    rows = cur.fetchall()
+    conn.close()
+    length = len(rows)
+    rows=list(rows)[::-1]
+    newRows= map(addPrice, rows)
+    return render_template('reservations.dashboard.html',len=length, rows=newRows, session = {"login": tempSession["login"], "user": tempSession["user"]})
 
 @app.route("/disponibility", methods=["GET", "POST"])
 def look_for_disponibility():
@@ -402,10 +492,13 @@ def cargarSelect():
     tempSession = getCurrentUser()
     logged = tempSession["login"]
     user = tempSession["user"]
-    if logged==0 and request.endpoint in ["feed_page", "dashboard_page", "dashboard_habitacion_page"]:
+    if logged==0 and request.endpoint in ["feed_page", "dashboard_page", "dashboard_habitacion_page", "dashboard_admin_page", "dashboard_admin_create","dashboard_admin_delete"]:
         return redirect(url_for("index"))
     if logged==1:
-        if user["role"]!="admin" and request.endpoint in ["dashboard_page", "dashboard_habitacion_page"]:
+        if user["role"]!="admin" and request.endpoint in ["dashboard_page", "dashboard_habitacion_page", "dashboard_admin_page", "dashboard_admin_create","dashboard_admin_delete"]:
+            return redirect(url_for("index"))
+    if logged==1:
+        if user["role"]!="superadmin" and request.endpoint in ["dashboard_admin_page", "dashboard_admin_create", "dashboard_admin_delete"]:
             return redirect(url_for("index"))
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
