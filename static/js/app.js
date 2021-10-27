@@ -180,7 +180,7 @@ document
       ).value;
       id_room = habitacionSeleccionada;
 
-      let url = "http://127.0.0.1:5000/reservation";
+      let url = `${window.location.href}reservation`;
 
       axios
         .post(url, {
